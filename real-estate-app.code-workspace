@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "real-estate-app",
+      "path": ".",
+    },
+    {
+      "name": "client",
+      "path": "client",
+    },
+    {
+      "name": "server",
+      "path": "server",
+    },
+  ],
+  "settings": {},
+}

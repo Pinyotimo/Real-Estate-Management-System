@@ -1,5 +1,17 @@
-import api from "./api";
+import API from './api';
 
-export const getProperties = () => api.get("/properties");
-export const getPropertyById = (id) => api.get(`/properties/${id}`);
-export const createProperty = (data) => api.post("/properties", data);
+// Fetch all properties with optional filter params
+export const getProperties = async (filters = {}) => {
+  const response = await API.get('/properties', { params: filters });
+  return response.data;
+};
+
+// Create property listing (Handles File Uploads via FormData)
+export const createProperty = async (propertyData) => {
+  const response = await API.post('/properties', propertyData, {
+    headers: {
+      'Content-Type': 'multipart/form-data', // Crucial for image uploads
+    },
+  });
+  return response.data;
+};

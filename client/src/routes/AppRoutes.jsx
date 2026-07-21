@@ -1,20 +1,19 @@
-import { Routes, Route } from "react-router-dom";
-import HomePage from "../pages/HomePage";
-import PropertiesPage from "../pages/PropertiesPage";
-import PropertyDetailPage from "../pages/PropertyDetailPage";
-import FavoritesPage from "../pages/FavoritesPage";
-import AgentDashboardPage from "../pages/AgentDashboardPage";
-import NotFoundPage from "../pages/NotFoundPage";
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-const AppRoutes = () => (
-  <Routes>
-    <Route path="/" element={<HomePage />} />
-    <Route path="/properties" element={<PropertiesPage />} />
-    <Route path="/properties/:id" element={<PropertyDetailPage />} />
-    <Route path="/favorites" element={<FavoritesPage />} />
-    <Route path="/agent-dashboard" element={<AgentDashboardPage />} />
-    <Route path="*" element={<NotFoundPage />} />
-  </Routes>
-);
+// Simple placeholder page components
+const Home = () => <div className="p-8 text-2xl">🏡 Home Page</div>;
+const Properties = () => <div className="p-8 text-2xl">🔍 Property Listings</div>;
+const AddProperty = () => <div className="p-8 text-2xl">➕ Add New Property</div>;
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/properties" element={<Properties />} />
+      <Route path="/agent/create" element={<AddProperty />} />
+    </Routes>
+  );
+};
 
 export default AppRoutes;

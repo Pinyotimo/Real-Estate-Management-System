@@ -1,27 +1,472 @@
+/* ===== Google Font ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
+
 :root {
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  /* ----- Fonts ----- */
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #111827;
-  background-color: #f9fafb;
+
+  /* ----- Light theme (default) ----- */
+  --bg-app: #f1f5f9;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+  --surface-muted: #e9edf2;
+  --border: #d1d9e6;
+  --border-light: #e2e8f0;
+
+  --text-primary: #0b1a2f;
+  --text-muted: #64748b;
+  --text-subtle: #475569;
+  --input-bg: #ffffff;
+
+  /* Primary – Indigo 600 */
+  --primary: #4f46e5;
+  --primary-soft: #eef2ff;
+  --primary-hover: #4338ca;
+
+  /* Semantic colours */
+  --success: #22c55e;
+  --success-soft: #f0fdf4;
+  --danger: #ef4444;
+  --danger-soft: #fef2f2;
+  --warning: #f59e0b;
+  --warning-soft: #fffbeb;
+  --info: #3b82f6;
+  --info-soft: #eff6ff;
+
+  /* Shadows – more depth */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
+
+  /* Misc */
+  --radius: 8px;
+  --transition: 0.2s ease;
 }
 
+/* ===== Dark theme ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-app: #0f172a;
+    --surface: #1e293b;
+    --surface-soft: #334155;
+    --surface-muted: #475569;
+    --border: #475569;
+    --border-light: #334155;
+    --text-primary: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-subtle: #cbd5e1;
+    --input-bg: #1e293b;
+
+    --primary: #818cf8;
+    --primary-soft: #312e81;
+    --primary-hover: #6366f1;
+
+    --success: #4ade80;
+    --success-soft: #052e16;
+    --danger: #f87171;
+    --danger-soft: #450a0a;
+    --warning: #fbbf24;
+    --warning-soft: #422006;
+    --info: #60a5fa;
+    --info-soft: #172554;
+  }
+}
+
+/* ===== Resets & base ===== */
 * {
   box-sizing: border-box;
+  margin: 0;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
   min-height: 100vh;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Utility animation classes */
+.animate-fade-in {
+  animation: fadeInUp 0.4s ease forwards;
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--surface-soft) 25%, var(--surface-muted) 50%, var(--surface-soft) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+/* ===== Layout & Shell ===== */
+.dashboard-shell {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.dashboard-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* ===== Cards ===== */
+.dashboard-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.dashboard-card-grid--property {
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+
+.dashboard-card {
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+  animation: fadeInUp 0.4s ease forwards;
+}
+.dashboard-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.dashboard-card-title {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.dashboard-card-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.25rem;
+}
+
+/* ===== Tabs ===== */
+.dashboard-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+.dashboard-tab {
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--transition), border-color var(--transition);
+}
+.dashboard-tab:hover {
+  color: var(--text-primary);
+}
+.dashboard-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.dashboard-tab:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ===== Panels & Forms ===== */
+.dashboard-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  align-items: end;
+  background: var(--surface-soft);
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+.dashboard-form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--surface-soft);
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.dashboard-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+.dashboard-input,
+.dashboard-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dashboard-input:focus,
+.dashboard-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+  outline: none;
+}
+.dashboard-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-subtle);
+  cursor: pointer;
+}
+
+/* ===== Buttons ===== */
+.dashboard-btn {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  transition: background var(--transition), transform 0.1s, box-shadow var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dashboard-btn:hover {
+  background: var(--primary-hover);
+}
+.dashboard-btn:active {
+  transform: scale(0.97);
+}
+.dashboard-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.dashboard-btn--success {
+  background: var(--success);
+}
+.dashboard-btn--success:hover {
+  background: #16a34a;
+}
+.dashboard-btn--danger {
+  background: var(--danger);
+}
+.dashboard-btn--danger:hover {
+  background: #dc2626;
+}
+.dashboard-btn--dark {
+  background: #1e293b;
+}
+.dashboard-btn--dark:hover {
+  background: #0f172a;
+}
+.dashboard-btn--purple {
+  background: #7c3aed;
+}
+.dashboard-btn--purple:hover {
+  background: #6d28d9;
+}
+
+/* ===== Pills / Badges ===== */
+.dashboard-pill {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.dashboard-pill--success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.dashboard-pill--danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.dashboard-pill--warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.dashboard-pill--info {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+/* ===== Table ===== */
+.dashboard-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.dashboard-table th {
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--border-light);
+  background: var(--surface-muted);
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-subtle);
+}
+.dashboard-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+}
+.dashboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== Utility ===== */
+.dashboard-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.dashboard-inline-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.dashboard-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dashboard-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+.dashboard-link:hover {
+  text-decoration: underline;
+}
+
+/* ===== Auth & Page Cards ===== */
+.page-card {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.4s ease;
+}
+.auth-card {
+  max-width: 450px;
+  margin: 3rem auto;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.4s ease;
+}
+.auth-demo-panel {
+  background: var(--surface-soft);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.auth-error {
+  padding: 0.75rem;
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+.dashboard-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===== Inquiry card (example) ===== */
+.dashboard-inquiry-card {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.animate-pulse {
+  animation: pulse-dot 1.5s ease-in-out infinite;
 }
