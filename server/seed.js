@@ -28,32 +28,40 @@ const seedDatabase = async () => {
 
     // 3. Create Users
     const agent = await User.create({
-      name: "John Agent (Prime Properties)",
-      email: "agent@test.com",
-      password: hashedPassword,
-      phone: "+254700111222",
-      role: "agent",
-    });
+  name: "John Agent (Prime Properties)",
+  email: "agent@test.com",
+  password: hashedPassword,
+  phone: "+254700111222",
+  role: "agent",
+});
 
-    const tenantResidential = await User.create({
-      name: "Alice Johnson",
-      email: "alice@test.com",
-      password: hashedPassword,
-      phone: "+254711333444",
-      role: "tenant",
-    });
+const admin = await User.create({
+  name: "System Admin",
+  email: "admin@test.com",
+  password: hashedPassword,
+  phone: "+2547001112244",
+  role: "admin",
+});
 
-    const tenantCommercial = await User.create({
-      name: "Apex Logistics Ltd",
-      email: "apex@test.com",
-      password: hashedPassword,
-      phone: "+254722555666",
-      role: "tenant",
-    });
+const tenantResidential = await User.create({
+  name: "Alice Johnson",
+  email: "alice@test.com",
+  password: hashedPassword,
+  phone: "+254711333444",
+  role: "tenant",
+});
+
+const tenantCommercial = await User.create({
+  name: "Apex Logistics Ltd",
+  email: "apex@test.com",
+  password: hashedPassword,
+  phone: "+254722555666",
+  role: "tenant",
+});
 
     console.log(
-      "👤 Users seeded (agent: agent@test.com | Password: password123)",
-    );
+  "👤 Users seeded (agent: agent@test.com | admin: admin@test.com | tenant: alice@test.com | Password: password123)",
+);
 
     // 4. Create Properties (House, Warehouse, Business Space)
     const house = await Property.create({

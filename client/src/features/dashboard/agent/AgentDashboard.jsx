@@ -12,6 +12,7 @@ const AgentDashboard = () => {
   const [data, setData] = useState(null);
   const [registeredTenants, setRegisteredTenants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("occupancy");
   const [selectedTenantMap, setSelectedTenantMap] = useState({});
   const [expenseForm, setExpenseForm] = useState({
@@ -23,6 +24,7 @@ const AgentDashboard = () => {
 
   const fetchDashboardData = async () => {
     setLoading(true);
+    setError("");
     try {
       const [overviewRes, tenantsRes] = await Promise.all([
         API.get("/agent/overview"),
@@ -32,6 +34,7 @@ const AgentDashboard = () => {
       setRegisteredTenants(tenantsRes.data.data || []);
     } catch (err) {
       console.error("Failed to load agent dashboard data:", err);
+      setError("Could not load your dashboard. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -134,20 +137,19 @@ const AgentDashboard = () => {
     setExpenseForm((current) => ({ ...current, [field]: value }));
   };
 
-  if (loading) {
-    return (
-      <p style={{ textAlign: "center", marginTop: "3rem" }}>
-        Loading Landlord Portal...
-      </p>
-    );
-  }
-
   const { financials, properties, expenses, inquiries } = data || {
     financials: {},
     properties: [],
     expenses: [],
     inquiries: [],
   };
+
+  // ----- Occupancy analytics computed from properties -----
+  const totalUnits = properties.length;
+  const occupiedUnits = properties.filter((p) => p.status === "occupied").length;
+  const vacantUnits = totalUnits - occupiedUnits;
+  const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
+  const pendingRepairs = properties.filter((p) => p.repairStatus === "pending" || p.repairStatus === "in_progress").length;
 
   const tabs = [
     {
@@ -167,52 +169,222 @@ const AgentDashboard = () => {
   ];
 
   return (
-    <div className="dashboard-shell">
-      <h2 className="dashboard-title">🏢 Agent & Landlord ERP Dashboard</h2>
+    <>
+      <style>{`
+        .agent-dashboard-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        .agent-dashboard-refresh {
+          font-size: 0.85rem;
+          color: var(--text-muted);
+          background: none;
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          padding: 0.4rem 0.8rem;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          transition: background 0.2s ease, color 0.2s ease;
+        }
+        .agent-dashboard-refresh:hover {
+          background: var(--surface-soft);
+          color: var(--text-primary);
+        }
 
-      <StatCards financials={financials} />
-      <DashboardTabs
-        activeTab={activeTab}
-        onChange={setActiveTab}
-        tabs={tabs}
-      />
+        /* Analytics strip */
+        .analytics-strip {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        .analytics-cell {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+        }
+        .analytics-cell-label {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+        .analytics-cell-value {
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+        .occupancy-bar-track {
+          height: 6px;
+          background: var(--border-light);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-top: 0.15rem;
+        }
+        .occupancy-bar-fill {
+          height: 100%;
+          background: var(--success);
+          border-radius: 4px;
+          transition: width 0.3s ease;
+        }
 
-      {activeTab === "occupancy" && (
-        <OccupancyTab
-          properties={properties}
-          registeredTenants={registeredTenants}
-          selectedTenantMap={selectedTenantMap}
-          onAssignTenant={handleAssignTenant}
-          onUnassignTenant={handleUnassignTenant}
-          onSelectTenant={handleSelectTenant}
-        />
-      )}
+        /* Nav wrapper for tabs */
+        .agent-nav-wrapper {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 0.5rem 0.5rem 0;
+          margin-bottom: 1.5rem;
+          box-shadow: var(--shadow-sm);
+        }
 
-      {activeTab === "rentroll" && (
-        <RentRollTab
-          properties={properties}
-          onUpdateTenant={handleUpdateTenant}
-        />
-      )}
+        /* Skeleton loading */
+        .agent-skeleton-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 1.25rem;
+          margin-bottom: 1.5rem;
+        }
+        .agent-skeleton-card {
+          height: 90px;
+          border-radius: var(--radius);
+        }
+        .agent-skeleton-tabs {
+          height: 44px;
+          border-radius: var(--radius);
+          margin-bottom: 1.5rem;
+        }
+        .agent-skeleton-body {
+          height: 260px;
+          border-radius: var(--radius);
+        }
 
-      {activeTab === "financials" && (
-        <ExpensesTab
-          expenses={expenses}
-          expenseForm={expenseForm}
-          onExpenseFormChange={handleExpenseFormChange}
-          onSubmitExpense={handleAddExpense}
-        />
-      )}
+        .agent-error-panel {
+          text-align: center;
+          max-width: 480px;
+          margin: 3rem auto;
+        }
+      `}</style>
 
-      {activeTab === "operations" && (
-        <OperationsTab
-          properties={properties}
-          onUpdateOperations={handleUpdateOperations}
-        />
-      )}
+      <div className="dashboard-shell">
+        <div className="agent-dashboard-header">
+          <h2 className="dashboard-title" style={{ margin: 0 }}>
+            🏢 Agent & Landlord ERP Dashboard
+          </h2>
+          {!loading && !error && (
+            <button className="agent-dashboard-refresh" onClick={fetchDashboardData}>
+              🔄 Refresh Data
+            </button>
+          )}
+        </div>
 
-      {activeTab === "inquiries" && <InquiriesTab inquiries={inquiries} />}
-    </div>
+        {error ? (
+          <div className="agent-error-panel">
+            <div className="dashboard-panel">
+              <p className="auth-error" style={{ display: "inline-block" }}>
+                {error}
+              </p>
+              <div style={{ marginTop: "1rem" }}>
+                <button className="dashboard-btn" onClick={fetchDashboardData}>
+                  Retry
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : loading ? (
+          <>
+            <div className="agent-skeleton-grid">
+              <div className="agent-skeleton-card animate-shimmer" />
+              <div className="agent-skeleton-card animate-shimmer" />
+              <div className="agent-skeleton-card animate-shimmer" />
+              <div className="agent-skeleton-card animate-shimmer" />
+            </div>
+            <div className="agent-skeleton-tabs animate-shimmer" />
+            <div className="agent-skeleton-body animate-shimmer" />
+          </>
+        ) : (
+          <>
+            {/* Quick occupancy analytics */}
+            <div className="analytics-strip">
+              <div className="analytics-cell">
+                <span className="analytics-cell-label">Occupancy Rate</span>
+                <span className="analytics-cell-value">{occupancyRate}%</span>
+                <div className="occupancy-bar-track">
+                  <div className="occupancy-bar-fill" style={{ width: `${occupancyRate}%` }} />
+                </div>
+              </div>
+              <div className="analytics-cell">
+                <span className="analytics-cell-label">Occupied Units</span>
+                <span className="analytics-cell-value" style={{ color: "var(--success)" }}>
+                  {occupiedUnits}
+                </span>
+              </div>
+              <div className="analytics-cell">
+                <span className="analytics-cell-label">Vacant Units</span>
+                <span className="analytics-cell-value" style={{ color: "var(--danger)" }}>
+                  {vacantUnits}
+                </span>
+              </div>
+              <div className="analytics-cell">
+                <span className="analytics-cell-label">Repairs Pending</span>
+                <span className="analytics-cell-value" style={{ color: "var(--warning)" }}>
+                  {pendingRepairs}
+                </span>
+              </div>
+            </div>
+
+            {/* Financial stat cards */}
+            <StatCards financials={financials} />
+
+            {/* Tab navigation */}
+            <div className="agent-nav-wrapper">
+              <DashboardTabs activeTab={activeTab} onChange={setActiveTab} tabs={tabs} />
+            </div>
+
+            {activeTab === "occupancy" && (
+              <OccupancyTab
+                properties={properties}
+                registeredTenants={registeredTenants}
+                selectedTenantMap={selectedTenantMap}
+                onAssignTenant={handleAssignTenant}
+                onUnassignTenant={handleUnassignTenant}
+                onSelectTenant={handleSelectTenant}
+              />
+            )}
+
+            {activeTab === "rentroll" && (
+              <RentRollTab properties={properties} onUpdateTenant={handleUpdateTenant} />
+            )}
+
+            {activeTab === "financials" && (
+              <ExpensesTab
+                expenses={expenses}
+                expenseForm={expenseForm}
+                onExpenseFormChange={handleExpenseFormChange}
+                onSubmitExpense={handleAddExpense}
+              />
+            )}
+
+            {activeTab === "operations" && (
+              <OperationsTab properties={properties} onUpdateOperations={handleUpdateOperations} />
+            )}
+
+            {activeTab === "inquiries" && <InquiriesTab inquiries={inquiries} />}
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

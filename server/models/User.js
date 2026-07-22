@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema(
       enum: ['tenant', 'agent', 'admin'],
       default: 'tenant',
     },
+    suspended: { type: Boolean, default: false },
+    suspendedAt: { type: Date, default: null },
+    tokenVersion: { type: Number, default: 0 }, // bump to invalidate existing JWTs
+    lastActiveAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
