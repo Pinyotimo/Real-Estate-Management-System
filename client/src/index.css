@@ -1,3 +1,6 @@
+/* ===== Google Font ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
+
 :root {
   /* ----- Fonts ----- */
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -17,41 +20,20 @@
   --text-subtle: #475569;
   --input-bg: #ffffff;
 
-  /* =========================================================
-     DAVIS & SHIRTLIFF OFFICIAL BRAND PALETTE
-     (from Brand Guidelines 2022)
-     ========================================================= */
+  /* Primary – Indigo 600 */
+  --primary: #4f46e5;
+  --primary-soft: #eef2ff;
+  --primary-hover: #4338ca;
 
-  /* --- Logo colours --- */
-  --brand-black: #000000;               /* Logo: Black 100% — C0 M0 Y0 K100 */
-  --brand-cyan: #00AFEF;                /* Logo: Cyan 100% — C100 M0 Y0 K0 */
-
-  /* --- Primary brand colour --- */
-  /* Pantone 3005 C — main D&S mid-blue, C85 M50 Y0 K0 */
-  --primary: #1C75BC;
-  --primary-soft: #D4EFFC;
-  --primary-hover: #262262;
-
-  /* --- Secondary brand colours --- */
-  --brand-navy: #262262;                /* Pantone 2755 C — C100 M100 Y25 K25 */
-  --brand-sky: #8ED8F8;                 /* Pantone 2975 C (100%) — C40 M0 Y0 K0 */
-  --brand-sky-40: #C3E7FA;              /* Pantone 2975 C tint 40% (approx) */
-  --brand-sky-15: #E9F6FD;              /* Pantone 2975 C tint 15% — C15 M0 Y0 K0 → R212 G239 B252 */
-
-  /* One-colour logo variant */
-  --brand-one-colour: #1C75BC;          /* Pantone 306 U substitute — using D&S blue */
-
-  /* --- Semantic colours (kept off-brand for UI states only:
-         success/danger/warning are NOT in the brand guide,
-         used purely for functional UI feedback) --- */
+  /* Semantic colours */
   --success: #22c55e;
   --success-soft: #f0fdf4;
   --danger: #ef4444;
   --danger-soft: #fef2f2;
   --warning: #f59e0b;
   --warning-soft: #fffbeb;
-  --info: #00AFEF;                      /* = brand-cyan */
-  --info-soft: #D4EFFC;                 /* = brand sky tint 15% */
+  --info: #3b82f6;
+  --info-soft: #eff6ff;
 
   /* Shadows – more depth */
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -77,20 +59,9 @@
     --text-subtle: #cbd5e1;
     --input-bg: #1e293b;
 
-    /* Brand colours flipped for dark bg — logo brand guide says
-       logo should NOT be reversed on dark unless white-only,
-       so we lighten the blue family instead of using raw brand hexes */
-    --brand-black: #ffffff;
-    --brand-cyan: #8ED8F8;
-    --primary: #8ED8F8;
-    --primary-soft: #262262;
-    --primary-hover: #00AFEF;
-
-    --brand-navy: #8ED8F8;
-    --brand-sky: #262262;
-    --brand-sky-40: #334155;
-    --brand-sky-15: #1e293b;
-    --brand-one-colour: #8ED8F8;
+    --primary: #818cf8;
+    --primary-soft: #312e81;
+    --primary-hover: #6366f1;
 
     --success: #4ade80;
     --success-soft: #052e16;
@@ -98,7 +69,7 @@
     --danger-soft: #450a0a;
     --warning: #fbbf24;
     --warning-soft: #422006;
-    --info: #8ED8F8;
+    --info: #60a5fa;
     --info-soft: #172554;
   }
 }
@@ -124,20 +95,36 @@ body {
 
 /* ===== Animations ===== */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
+/* Utility animation classes */
 .animate-fade-in {
   animation: fadeInUp 0.4s ease forwards;
 }
@@ -337,30 +324,17 @@ body {
 .dashboard-btn--danger:hover {
   background: #dc2626;
 }
-
-/* Brand navy button — Pantone 2755 C */
 .dashboard-btn--dark {
-  background: var(--brand-navy);
+  background: #1e293b;
 }
 .dashboard-btn--dark:hover {
-  background: #1a1745;
+  background: #0f172a;
 }
 .dashboard-btn--purple {
-  background: var(--brand-navy);
+  background: #7c3aed;
 }
 .dashboard-btn--purple:hover {
-  background: #1a1745;
-}
-
-/* Brand gradient button — sweeps across the official palette:
-   Pantone 3005 C → Cyan 100% → Pantone 2975 C */
-.dashboard-btn--gradient {
-  background: linear-gradient(135deg, var(--primary), var(--brand-cyan), var(--brand-sky));
-  color: #fff;
-  box-shadow: var(--shadow-md);
-}
-.dashboard-btn--gradient:hover {
-  filter: brightness(1.08);
+  background: #6d28d9;
 }
 
 /* ===== Pills / Badges ===== */
@@ -386,15 +360,6 @@ body {
 .dashboard-pill--info {
   background: var(--info-soft);
   color: var(--info);
-}
-/* Brand-specific pills, keyed to Pantone references */
-.dashboard-pill--brand-navy {
-  background: var(--brand-sky-15);
-  color: var(--brand-navy);
-}
-.dashboard-pill--brand-sky {
-  background: var(--brand-sky-15);
-  color: var(--primary);
 }
 
 /* ===== Table ===== */
@@ -490,34 +455,6 @@ body {
   gap: 1rem;
 }
 
-/* Section accents — brand blue family only, replaces
-   the earlier off-brand purple/teal/orange/pink accents */
-.form-section {
-  border-left: 4px solid var(--primary);          /* Pantone 3005 C */
-  padding-left: 1rem;
-  margin-bottom: 1.5rem;
-  border-radius: 0 var(--radius) var(--radius) 0;
-}
-.form-section--navy { border-left-color: var(--brand-navy); }   /* Pantone 2755 C */
-.form-section--cyan { border-left-color: var(--brand-cyan); }   /* Logo cyan 100% */
-.form-section--sky  { border-left-color: var(--brand-sky); }    /* Pantone 2975 C */
-
-.form-section-heading {
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-/* Media thumbnail border — brand cyan */
-.media-thumb {
-  border: 2px solid var(--brand-cyan) !important;
-}
-
 /* ===== Inquiry card (example) ===== */
 .dashboard-inquiry-card {
   padding: 1rem;
@@ -526,6 +463,10 @@ body {
   background: var(--surface-soft);
 }
 
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
 .animate-pulse {
   animation: pulse-dot 1.5s ease-in-out infinite;
 }

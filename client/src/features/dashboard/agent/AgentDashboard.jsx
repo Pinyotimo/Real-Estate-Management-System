@@ -44,7 +44,7 @@ const AgentDashboard = () => {
   const handleAssignTenant = async (propertyId) => {
     const tenantUserId = selectedTenantMap[propertyId];
     if (!tenantUserId) {
-      return alert("Please select a registered tenant from the list.");
+      return alert("Please select a registered tenant or buyer from the list.");
     }
 
     try {
@@ -136,11 +136,9 @@ const AgentDashboard = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-shell">
-        <p style={{ textAlign: "center", marginTop: "3rem", color: "var(--text-muted)" }}>
-          Loading Agent Portal...
-        </p>
-      </div>
+      <p style={{ textAlign: "center", marginTop: "3rem" }}>
+        Loading Landlord Portal...
+      </p>
     );
   }
 
@@ -170,7 +168,7 @@ const AgentDashboard = () => {
 
   return (
     <div className="dashboard-shell">
-      <h2 className="dashboard-title">🏢 Agent ERP Dashboard</h2>
+      <h2 className="dashboard-title">🏢 Agent & Landlord ERP Dashboard</h2>
 
       <StatCards financials={financials} />
       <DashboardTabs

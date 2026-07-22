@@ -4,7 +4,6 @@ import API from "../../../api";
 const TenantDashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("property");
 
   const [payForm, setPayForm] = useState({
@@ -20,13 +19,11 @@ const TenantDashboard = () => {
 
   const fetchTenantData = async () => {
     setLoading(true);
-    setError("");
     try {
       const res = await API.get("/tenant/overview");
       setData(res.data.data);
     } catch (err) {
       console.error("Error fetching tenant dashboard:", err);
-      setError("Could not load your tenant portal. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -60,7 +57,7 @@ const TenantDashboard = () => {
         propertyId: data.property._id,
         ...complaintForm,
       });
-      alert("📢 Complaint sent to agent.");
+      alert("📢 Complaint sent to landlord.");
       setComplaintForm({ title: "", category: "plumbing", description: "" });
       fetchTenantData();
     } catch (err) {
@@ -68,68 +65,49 @@ const TenantDashboard = () => {
     }
   };
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="dashboard-shell">
-        <p
-          style={{
-            textAlign: "center",
-            marginTop: "3rem",
-            color: "var(--text-muted)",
-          }}
-        >
-          Loading Resident Portal...
-        </p>
-      </div>
+      <p style={{ textAlign: "center", marginTop: "3rem" }}>
+        Loading Resident Portal...
+      </p>
     );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="dashboard-shell">
-        <div className="dashboard-panel" style={{ textAlign: "center" }}>
-          <p className="auth-error" style={{ display: "inline-block" }}>
-            {error || "Something went wrong loading your portal."}
-          </p>
-          <div style={{ marginTop: "1rem" }}>
-            <button className="dashboard-btn" onClick={fetchTenantData}>
-              Retry
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const { property, complaints, payments } = data;
 
   return (
-    <div className="dashboard-shell">
-      <h2 className="dashboard-title">🔑 Resident & Business Tenant Portal</h2>
+    <div style={{ maxWidth: "1100px", margin: "2rem auto", padding: "0 1rem" }}>
+      <h2>🔑 Resident & Business Tenant Portal</h2>
 
       {/* Tabs */}
-      <div className="dashboard-tabs">
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          borderBottom: "2px solid #e2e8f0",
+          marginBottom: "1.5rem",
+        }}
+      >
         <button
           onClick={() => setActiveTab("property")}
-          className={`dashboard-tab ${activeTab === "property" ? "active" : ""}`}
+          style={tabStyle(activeTab === "property")}
         >
           🏢 My Unit
         </button>
         <button
           onClick={() => setActiveTab("payments")}
-          className={`dashboard-tab ${activeTab === "payments" ? "active" : ""}`}
+          style={tabStyle(activeTab === "payments")}
         >
           💳 Pay Rent & Bills
         </button>
         <button
           onClick={() => setActiveTab("complaints")}
-          className={`dashboard-tab ${activeTab === "complaints" ? "active" : ""}`}
+          style={tabStyle(activeTab === "complaints")}
         >
           🛠️ Report Issues ({complaints.length})
         </button>
         <button
           onClick={() => setActiveTab("receipts")}
-          className={`dashboard-tab ${activeTab === "receipts" ? "active" : ""}`}
+          style={tabStyle(activeTab === "receipts")}
         >
           🧾 Payment Receipts ({payments.length})
         </button>
@@ -139,44 +117,65 @@ const TenantDashboard = () => {
       {activeTab === "property" && (
         <div>
           {!property ? (
-            <div className="dashboard-panel" style={{ textAlign: "center" }}>
-              <p style={{ color: "var(--text-muted)" }}>
-                You do not have an assigned unit yet. Ask your agent to assign
-                your house, warehouse, or business unit to your registered
-                account.
+            <div
+              style={{
+                padding: "2rem",
+                background: "#f8fafc",
+                borderRadius: "8px",
+                textAlign: "center",
+              }}
+            >
+              <p style={{ color: "#64748b" }}>
+                You do not have an assigned unit yet. Ask your landlord to
+                assign your house, warehouse, or business unit to your
+                registered account.
               </p>
             </div>
           ) : (
-            <div className="dashboard-card-grid">
-              <div className="dashboard-panel">
-                <span className="dashboard-pill dashboard-pill--info">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "1.5rem",
+              }}
+            >
+              <div style={cardStyle}>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    padding: "0.2rem 0.5rem",
+                    borderRadius: "4px",
+                    background: "#e0f2fe",
+                    color: "#0369a1",
+                    fontWeight: "bold",
+                  }}
+                >
                   Category: {property.houseType}
                 </span>
                 <h3 style={{ marginTop: "0.5rem" }}>{property.title}</h3>
-                <p style={{ color: "var(--text-muted)" }}>
+                <p style={{ color: "#64748b" }}>
                   📍 {property.estate}, {property.county}
                 </p>
                 <p>
-                  <strong>Monthly Rent:</strong> Ksh {property.price}
+                  <strong>Monthly Rent:</strong> ${property.price}
                 </p>
                 <p>
-                  <strong>Rent Paid Total:</strong> Ksh {property.rentPaid || 0}
+                  <strong>Rent Paid Total:</strong> ${property.rentPaid || 0}
                 </p>
                 <p>
                   <strong>Current Balance / Arrears:</strong>{" "}
                   <span
-                    className={`dashboard-pill ${
-                      property.rentArrears > 0
-                        ? "dashboard-pill--danger"
-                        : "dashboard-pill--success"
-                    }`}
+                    style={{
+                      color: property.rentArrears > 0 ? "#dc2626" : "#16a34a",
+                      fontWeight: "bold",
+                    }}
                   >
-                    Ksh {property.rentArrears || 0}
+                    ${property.rentArrears || 0}
                   </span>
                 </p>
               </div>
 
-              <div className="dashboard-panel">
+              <div style={cardStyle}>
                 <h3>⚡ Utilities & Meter Info</h3>
                 <p>
                   <strong>Electricity Meter Number:</strong>{" "}
@@ -185,18 +184,23 @@ const TenantDashboard = () => {
                 <p>
                   <strong>WiFi Connection Status:</strong>{" "}
                   <span
-                    className={`dashboard-pill ${
-                      property.wifiStatus === "active"
-                        ? "dashboard-pill--success"
-                        : "dashboard-pill--danger"
-                    }`}
+                    style={{
+                      textTransform: "capitalize",
+                      fontWeight: "bold",
+                      color:
+                        property.wifiStatus === "active"
+                          ? "#16a34a"
+                          : "#dc2626",
+                    }}
                   >
                     {property.wifiStatus || "active"}
                   </span>
                 </p>
                 <p>
                   <strong>Active Repairs:</strong>{" "}
-                  <span className="dashboard-pill dashboard-pill--warning">
+                  <span
+                    style={{ textTransform: "capitalize", fontWeight: "bold" }}
+                  >
                     {property.repairStatus || "none"}
                   </span>
                 </p>
@@ -209,19 +213,28 @@ const TenantDashboard = () => {
       {/* TAB 2: PAYMENTS */}
       {activeTab === "payments" && (
         <div
-          className="dashboard-panel"
-          style={{ maxWidth: "500px", margin: "0 auto" }}
+          style={{
+            maxWidth: "500px",
+            margin: "0 auto",
+            background: "#f8fafc",
+            padding: "1.5rem",
+            borderRadius: "8px",
+            border: "1px solid #cbd5e1",
+          }}
         >
           <h3>Pay Rent or Bills</h3>
-          <form onSubmit={handleMakePayment} className="dashboard-form-stack">
+          <form
+            onSubmit={handleMakePayment}
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
             <div>
-              <label className="dashboard-label">Payment Type</label>
+              <label style={labelStyle}>Payment Type</label>
               <select
                 value={payForm.paymentType}
                 onChange={(e) =>
                   setPayForm({ ...payForm, paymentType: e.target.value })
                 }
-                className="dashboard-select"
+                style={inputStyle}
               >
                 <option value="rent">Monthly Rent</option>
                 <option value="service_charge">Service Charge</option>
@@ -230,7 +243,7 @@ const TenantDashboard = () => {
               </select>
             </div>
             <div>
-              <label className="dashboard-label">Amount (Ksh)</label>
+              <label style={labelStyle}>Amount ($)</label>
               <input
                 type="number"
                 placeholder="Enter amount"
@@ -239,27 +252,24 @@ const TenantDashboard = () => {
                   setPayForm({ ...payForm, amount: e.target.value })
                 }
                 required
-                className="dashboard-input"
+                style={inputStyle}
               />
             </div>
             <div>
-              <label className="dashboard-label">Method</label>
+              <label style={labelStyle}>Method</label>
               <select
                 value={payForm.paymentMethod}
                 onChange={(e) =>
                   setPayForm({ ...payForm, paymentMethod: e.target.value })
                 }
-                className="dashboard-select"
+                style={inputStyle}
               >
                 <option value="mpesa">M-Pesa / Mobile Money</option>
                 <option value="card">Credit / Debit Card</option>
                 <option value="bank_transfer">Bank Transfer</option>
               </select>
             </div>
-            <button
-              type="submit"
-              className="dashboard-btn dashboard-btn--success"
-            >
+            <button type="submit" style={btnStyle("#16a34a")}>
               Process Payment
             </button>
           </form>
@@ -272,9 +282,22 @@ const TenantDashboard = () => {
           <h3>Submit Complaint / Ticket</h3>
           <form
             onSubmit={handleComplaintSubmit}
-            className="dashboard-form-stack dashboard-panel"
+            style={{
+              background: "#f8fafc",
+              padding: "1.5rem",
+              borderRadius: "8px",
+              border: "1px solid #cbd5e1",
+              marginBottom: "2rem",
+            }}
           >
-            <div className="dashboard-form-grid" style={{ marginBottom: 0 }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 1fr",
+                gap: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
               <input
                 type="text"
                 placeholder="Title (e.g. Electrical Fault)"
@@ -283,7 +306,7 @@ const TenantDashboard = () => {
                   setComplaintForm({ ...complaintForm, title: e.target.value })
                 }
                 required
-                className="dashboard-input"
+                style={inputStyle}
               />
               <select
                 value={complaintForm.category}
@@ -293,7 +316,7 @@ const TenantDashboard = () => {
                     category: e.target.value,
                   })
                 }
-                className="dashboard-select"
+                style={inputStyle}
               >
                 <option value="plumbing">Plumbing</option>
                 <option value="electricity">Electricity</option>
@@ -312,10 +335,12 @@ const TenantDashboard = () => {
                 })
               }
               required
-              className="dashboard-input"
-              style={{ height: "80px" }}
+              style={{ ...inputStyle, height: "80px" }}
             />
-            <button type="submit" className="dashboard-btn">
+            <button
+              type="submit"
+              style={{ ...btnStyle("#0284c7"), marginTop: "1rem" }}
+            >
               Submit Ticket
             </button>
           </form>
@@ -324,30 +349,38 @@ const TenantDashboard = () => {
 
       {/* TAB 4: RECEIPTS */}
       {activeTab === "receipts" && (
-        <div className="dashboard-table-wrapper">
+        <div>
           <h3>Payment Receipts</h3>
-          <table className="dashboard-table">
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr>
-                <th>Txn Reference</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Date</th>
+              <tr style={{ background: "#f1f5f9", textAlign: "left" }}>
+                <th style={{ padding: "0.75rem" }}>Txn Reference</th>
+                <th style={{ padding: "0.75rem" }}>Type</th>
+                <th style={{ padding: "0.75rem" }}>Amount</th>
+                <th style={{ padding: "0.75rem" }}>Date</th>
               </tr>
             </thead>
             <tbody>
               {payments.map((p) => (
-                <tr key={p._id}>
-                  <td>{p.transactionId}</td>
-                  <td style={{ textTransform: "capitalize" }}>
+                <tr key={p._id} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                  <td style={{ padding: "0.75rem" }}>{p.transactionId}</td>
+                  <td
+                    style={{ padding: "0.75rem", textTransform: "capitalize" }}
+                  >
                     {p.paymentType}
                   </td>
-                  <td>
-                    <span className="dashboard-pill dashboard-pill--success">
-                      Ksh {p.amount}
-                    </span>
+                  <td
+                    style={{
+                      padding: "0.75rem",
+                      color: "#16a34a",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ${p.amount}
                   </td>
-                  <td>{new Date(p.createdAt).toLocaleDateString()}</td>
+                  <td style={{ padding: "0.75rem" }}>
+                    {new Date(p.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -357,5 +390,44 @@ const TenantDashboard = () => {
     </div>
   );
 };
+
+const cardStyle = {
+  padding: "1.25rem",
+  background: "#f8fafc",
+  border: "1px solid #cbd5e1",
+  borderRadius: "8px",
+};
+const tabStyle = (active) => ({
+  padding: "0.6rem 1rem",
+  background: "none",
+  border: "none",
+  borderBottom: active ? "3px solid #0284c7" : "none",
+  color: active ? "#0284c7" : "#64748b",
+  fontWeight: "bold",
+  cursor: "pointer",
+});
+const inputStyle = {
+  width: "100%",
+  padding: "0.6rem",
+  borderRadius: "4px",
+  border: "1px solid #cbd5e1",
+  boxSizing: "border-box",
+};
+const labelStyle = {
+  display: "block",
+  fontSize: "0.85rem",
+  fontWeight: "bold",
+  marginBottom: "0.25rem",
+};
+const btnStyle = (bg) => ({
+  padding: "0.6rem 1.2rem",
+  background: bg,
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontWeight: "bold",
+  width: "100%",
+});
 
 export default TenantDashboard;
