@@ -21,15 +21,8 @@ const PropertyCard = ({ property }) => {
     estate && county ? `${estate}, ${county}` : location || "Location N/A";
 
   return (
-    <Link
-      to={`/properties/${_id}`}
-      className="dashboard-link"
-      style={{ textDecoration: "none" }}
-    >
-      <div
-        className="dashboard-card"
-        style={{ height: "100%", display: "flex", flexDirection: "column" }}
-      >
+    <Link to={`/properties/${_id}`} className="dashboard-link" style={{ textDecoration: "none" }}>
+      <div className="dashboard-card" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -57,64 +50,28 @@ const PropertyCard = ({ property }) => {
           </div>
         )}
 
-        <div
-          style={{
-            padding: "1rem",
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <h3
-            className="dashboard-title"
-            style={{ fontSize: "1.1rem", margin: "0 0 0.5rem" }}
-          >
+        <div style={{ padding: "1rem", flex: 1, display: "flex", flexDirection: "column" }}>
+          <h3 className="dashboard-title" style={{ fontSize: "1.1rem", margin: "0 0 0.5rem" }}>
             {title}
           </h3>
-          <p
-            className="dashboard-card-value"
-            style={{ fontSize: "1.2rem", color: "var(--success)" }}
-          >
-            Ksh {Number(price).toLocaleString()}
+          <p className="dashboard-card-value" style={{ fontSize: "1.2rem", color: "var(--success)" }}>
+            ${Number(price).toLocaleString()}
           </p>
-          <p
-            style={{
-              color: "var(--text-muted)",
-              fontSize: "0.9rem",
-              margin: "0 0 0.5rem",
-            }}
-          >
+          <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", margin: "0 0 0.5rem" }}>
             📍 {locationText}
           </p>
 
-          <div
-            className="dashboard-inline-actions"
-            style={{ flexWrap: "wrap", marginBottom: "0.75rem" }}
-          >
+          <div className="dashboard-inline-actions" style={{ flexWrap: "wrap", marginBottom: "0.75rem" }}>
             {houseType && (
-              <span className="dashboard-pill dashboard-pill--info">
-                {houseType}
-              </span>
+              <span className="dashboard-pill dashboard-pill--info">{houseType}</span>
             )}
             {bedrooms > 0 && (
-              <span
-                className="dashboard-pill"
-                style={{
-                  background: "var(--surface-muted)",
-                  color: "var(--text-subtle)",
-                }}
-              >
+              <span className="dashboard-pill" style={{ background: "var(--surface-muted)", color: "var(--text-subtle)" }}>
                 🛏️ {bedrooms} Bed
               </span>
             )}
             {bathrooms > 0 && (
-              <span
-                className="dashboard-pill"
-                style={{
-                  background: "var(--surface-muted)",
-                  color: "var(--text-subtle)",
-                }}
-              >
+              <span className="dashboard-pill" style={{ background: "var(--surface-muted)", color: "var(--text-subtle)" }}>
                 🚿 {bathrooms} Bath
               </span>
             )}

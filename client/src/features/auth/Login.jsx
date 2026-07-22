@@ -71,11 +71,11 @@ const Login = () => {
           </button>
           <button
             type="button"
-            onClick={() => handleDemoLogin("tenant@demo.com", "password123")}
+            onClick={() => handleDemoLogin("buyer@demo.com", "password123")}
             className="dashboard-btn dashboard-btn--success"
             style={{ flex: 1 }}
           >
-            👤 Tenant
+            👤 Buyer
           </button>
         </div>
       </div>
