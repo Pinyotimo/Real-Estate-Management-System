@@ -8,7 +8,7 @@ const User = require('../models/User');
 // @access  Private (Agent / Admin)
 const getTenantsList = async (req, res) => {
   try {
-    const tenants = await User.find({ role: 'buyer' }).select('-password');
+    const tenants = await User.find({ role: 'tenant' }).select('-password');
     res.status(200).json({ success: true, data: tenants });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

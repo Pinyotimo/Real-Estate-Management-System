@@ -9,7 +9,7 @@ const getAdminStats = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
     const totalAgents = await User.countDocuments({ role: 'agent' });
-    const totalBuyers = await User.countDocuments({ role: 'buyer' });
+    const totalTenants = await User.countDocuments({ role: 'tenant' });
     const totalProperties = await Property.countDocuments();
     const totalInquiries = await Inquiry.countDocuments();
 
@@ -18,7 +18,7 @@ const getAdminStats = async (req, res) => {
       data: {
         totalUsers,
         totalAgents,
-        totalBuyers,
+        totalTenants,
         totalProperties,
         totalInquiries,
       },

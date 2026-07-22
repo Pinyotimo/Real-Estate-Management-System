@@ -27,9 +27,9 @@ const seedDatabase = async () => {
     const hashedPassword = await bcrypt.hash("password123", salt);
 
     // 3. Create Users
-    const landlord = await User.create({
-      name: "John Landlord (Prime Properties)",
-      email: "landlord@test.com",
+    const agent = await User.create({
+      name: "John Agent (Prime Properties)",
+      email: "agent@test.com",
       password: hashedPassword,
       phone: "+254700111222",
       role: "agent",
@@ -40,7 +40,7 @@ const seedDatabase = async () => {
       email: "alice@test.com",
       password: hashedPassword,
       phone: "+254711333444",
-      role: "buyer",
+      role: "tenant",
     });
 
     const tenantCommercial = await User.create({
@@ -48,11 +48,11 @@ const seedDatabase = async () => {
       email: "apex@test.com",
       password: hashedPassword,
       phone: "+254722555666",
-      role: "buyer",
+      role: "tenant",
     });
 
     console.log(
-      "👤 Users seeded (Landlord: landlord@test.com | Password: password123)",
+      "👤 Users seeded (agent: agent@test.com | Password: password123)",
     );
 
     // 4. Create Properties (House, Warehouse, Business Space)
@@ -65,7 +65,7 @@ const seedDatabase = async () => {
       houseType: "Residential House",
       bedrooms: 3,
       bathrooms: 2,
-      user: landlord._id,
+      user: agent._id,
       status: "occupied",
       tenantUser: tenantResidential._id,
       tenantName: tenantResidential.name,
@@ -85,7 +85,7 @@ const seedDatabase = async () => {
       estate: "Industrial Area",
       county: "Nairobi",
       houseType: "Warehouse",
-      user: landlord._id,
+      user: agent._id,
       status: "occupied",
       tenantUser: tenantCommercial._id,
       tenantName: tenantCommercial.name,
@@ -105,7 +105,7 @@ const seedDatabase = async () => {
       estate: "CBD",
       county: "Nairobi",
       houseType: "Business Space / Office",
-      user: landlord._id,
+      user: agent._id,
       status: "vacant", // Vacant unit available for assignment
     });
 
@@ -117,7 +117,7 @@ const seedDatabase = async () => {
       estate: "Westlands",
       county: "Nairobi",
       houseType: "Shop / Commercial",
-      user: landlord._id,
+      user: agent._id,
       status: "vacant",
     });
 
@@ -156,7 +156,7 @@ const seedDatabase = async () => {
     // 6. Seed Expenses & Liabilities
     await Expense.create([
       {
-        user: landlord._id,
+        user: agent._id,
         property: warehouse._id,
         title: "Shutter Door Roller Replacement",
         category: "repairs",
@@ -164,7 +164,7 @@ const seedDatabase = async () => {
         isLiability: false, // Paid expense
       },
       {
-        user: landlord._id,
+        user: agent._id,
         property: house._id,
         title: "Annual Land Rates & Property Tax",
         category: "taxes",

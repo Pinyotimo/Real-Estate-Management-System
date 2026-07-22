@@ -15,7 +15,7 @@ const propertySchema = new mongoose.Schema(
     bedrooms: { type: Number, default: 0 },
     bathrooms: { type: Number, default: 0 },
     images: [{ type: String }],
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Landlord / Agent
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, //  Agent
 
     // Occupancy & Tenant Linkage
     status: { type: String, enum: ['vacant', 'occupied'], default: 'vacant' },
