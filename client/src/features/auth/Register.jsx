@@ -8,7 +8,7 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
-    role: "buyer",
+    role: "tenant",
   });
   const [error, setError] = useState("");
   const { login } = useContext(AuthContext);
@@ -63,7 +63,7 @@ const Register = () => {
           value={formData.role}
           className="dashboard-input"
         >
-          <option value="buyer">I am a Buyer/Tenant</option>
+          <option value="tenant">I am a Tenant</option>
           <option value="agent">I am an Agent/Landlord</option>
         </select>
         <button type="submit" className="dashboard-btn dashboard-btn--success">

@@ -8,12 +8,13 @@ const Navbar = () => {
   const isAgentOrAdmin =
     user && (user.role === "agent" || user.role === "admin");
   const isAdmin = user && user.role === "admin";
+  const isTenant = user && user.role === "tenant";
 
   return (
     <nav
       style={{
         padding: "1rem 2rem",
-        background: "#1e293b",
+        background: "#262262",
         color: "#fff",
         display: "flex",
         justifyContent: "space-between",
@@ -42,7 +43,7 @@ const Navbar = () => {
                 <Link
                   to="/add"
                   style={{
-                    color: "#38bdf8",
+                    color: "#8ED8F8",
                     fontWeight: "bold",
                     textDecoration: "none",
                   }}
@@ -52,12 +53,12 @@ const Navbar = () => {
                 <Link
                   to="/agent-dashboard"
                   style={{
-                    color: "#38bdf8",
+                    color: "#8ED8F8",
                     fontWeight: "bold",
                     textDecoration: "none",
                   }}
                 >
-                  📊 Landlord ERP
+                  📊 Agent ERP
                 </Link>
               </>
             )}
@@ -65,7 +66,7 @@ const Navbar = () => {
               <Link
                 to="/admin"
                 style={{
-                  color: "#a855f7",
+                  color: "#8ED8F8",
                   fontWeight: "bold",
                   textDecoration: "none",
                 }}
@@ -74,11 +75,11 @@ const Navbar = () => {
               </Link>
             )}
 
-            {user && user.role === "buyer" && (
+            {isTenant && (
               <Link
                 to="/tenant-dashboard"
                 style={{
-                  color: "#38bdf8",
+                  color: "#8ED8F8",
                   fontWeight: "bold",
                   textDecoration: "none",
                 }}
@@ -87,7 +88,7 @@ const Navbar = () => {
               </Link>
             )}
 
-            <span style={{ fontSize: "0.9rem", color: "#94a3b8" }}>
+            <span style={{ fontSize: "0.9rem", color: "#cbd5e1" }}>
               Hello, {user.name} ({user.role})
             </span>
             <button
@@ -112,7 +113,7 @@ const Navbar = () => {
             <Link
               to="/register"
               style={{
-                background: "#0284c7",
+                background: "#1C75BC",
                 color: "#fff",
                 padding: "0.4rem 0.8rem",
                 borderRadius: "4px",

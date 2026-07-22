@@ -1,6 +1,6 @@
 const InquiriesTab = ({ inquiries }) => (
   <div>
-    <h3 className="dashboard-section-title">Buyer & Tenant Inquiries</h3>
+    <h3 className="dashboard-section-title">Tenant Inquiries</h3>
     {inquiries.length === 0 ? (
       <p className="dashboard-subtitle">No messages received yet.</p>
     ) : (

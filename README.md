@@ -20,6 +20,7 @@ A full-stack real-estate platform with a React + Vite frontend and an Express + 
 ## Prerequisites
 
 - Node.js (v16+ recommended)
+- 
 - npm or yarn
 - MongoDB (local or a hosted connection string)
 
