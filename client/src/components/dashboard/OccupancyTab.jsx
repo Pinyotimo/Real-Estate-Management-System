@@ -12,7 +12,7 @@ const OccupancyTab = ({
     </h3>
     <p className="dashboard-subtitle">
       Assign houses, warehouses, or commercial business spaces to registered
-      buyers/tenants.
+      tenants.
     </p>
 
     <div className="dashboard-card-grid dashboard-card-grid--property">
@@ -41,7 +41,7 @@ const OccupancyTab = ({
               📍 {property.estate}, {property.county}
             </p>
             <p style={{ fontWeight: "bold", color: "#0284c7" }}>
-              Rent: ${property.price}/mo
+              Rent: Ksh {property.price}/mo
             </p>
 
             <div

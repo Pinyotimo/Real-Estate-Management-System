@@ -91,9 +91,9 @@ const AdminDashboard = () => {
           </span>
         </div>
         <div className="dashboard-card">
-          <span className="dashboard-card-title">Buyers / Tenants</span>
+          <span className="dashboard-card-title"> Tenants</span>
           <span className="dashboard-card-value">
-            {stats?.totalBuyers || 0}
+            {stats?.totalTenants || 0}
           </span>
         </div>
         <div className="dashboard-card">
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
                       onChange={(e) => handleRoleChange(u._id, e.target.value)}
                       className="dashboard-input"
                     >
-                      <option value="buyer">buyer</option>
+                      <option value="tenant">tenant</option>
                       <option value="agent">agent</option>
                       <option value="admin">admin</option>
                     </select>
@@ -186,7 +186,7 @@ const AdminDashboard = () => {
                   <td>
                     {p.estate}, {p.county}
                   </td>
-                  <td>${Number(p.price).toLocaleString()}</td>
+                  <td>Ksh {Number(p.price).toLocaleString()}</td>
                   <td>{p.houseType}</td>
                   <td>
                     <button
