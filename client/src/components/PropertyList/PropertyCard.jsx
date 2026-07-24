@@ -34,7 +34,7 @@ const PropertyCard = ({ property }) => {
               {property.status || "available"}
             </span>
           </div>
-          <p className="dashboard-card-value">${Number(price).toLocaleString()}</p>
+          <p className="dashboard-card-value">KES {Number(price).toLocaleString()}</p>
           <p className="dashboard-subtitle">
             {locationText}
           </p>
@@ -51,9 +51,7 @@ const PropertyCard = ({ property }) => {
             )}
           </div>
 
-          <p className="dashboard-subtitle">
-            {description}
-          </p>
+          
           <div className="dashboard-inline-actions">
             <span className="dashboard-btn dashboard-btn--outline">View Details</span>
             <span className="dashboard-btn dashboard-btn--ghost">Save</span>

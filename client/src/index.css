@@ -1157,4 +1157,25 @@ a {
   .media-viewer {
     min-height: 240px;
   }
+
+
+  .media-thumb:focus-visible {
+  outline: 3px solid var(--brand-light-blue);
+  outline-offset: 2px;
+}
+
+.media-viewer:focus-visible {
+  outline: 3px solid var(--brand-light-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+.auth-card {
+  position: relative;
+}
+
+.auth-card .dashboard-input[type="password"],
+.auth-card .dashboard-input[type="text"] {
+  padding-right: 2.75rem;
+}
 }

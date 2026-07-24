@@ -207,7 +207,7 @@ const AdminDashboard = () => {
 
         <div className="dashboard-card">
           <span className="dashboard-card-title">Total Listed Value</span>
-          <span className="dashboard-card-value">${(totalListingValue / 1000000).toFixed(1)}M</span>
+          <span className="dashboard-card-value">KES {(totalListingValue / 1000000).toFixed(1)}M</span>
         </div>
 
         <div className="dashboard-card">
@@ -452,7 +452,7 @@ const AdminDashboard = () => {
                         <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>{p.county}</div>
                       </div>
                     </td>
-                    <td style={{ fontWeight: "700", color: "var(--primary)" }}>${Number(p.price).toLocaleString()}</td>
+                    <td style={{ fontWeight: "700", color: "var(--primary)" }}>KES {Number(p.price).toLocaleString()}</td>
                     <td>
                       <span style={{
                         display: "inline-block",

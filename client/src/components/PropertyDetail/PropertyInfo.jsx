@@ -23,7 +23,7 @@ const PropertyInfo = ({ property }) => {
             <h1 className="dashboard-title">{title}</h1>
             <p className="dashboard-subtitle">{estate}, {county} County</p>
           </div>
-          <span className="dashboard-card-value">${Number(price).toLocaleString()}</span>
+          <span className="dashboard-card-value">KES {Number(price).toLocaleString()}</span>
         </div>
       </section>
 

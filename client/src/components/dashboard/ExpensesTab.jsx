@@ -17,7 +17,7 @@ const ExpensesTab = ({
       />
       <input
         type="number"
-        placeholder="Amount ($)"
+        placeholder="Amount (KES)"
         value={expenseForm.amount}
         onChange={(event) => onExpenseFormChange("amount", event.target.value)}
         required
@@ -66,10 +66,10 @@ const ExpensesTab = ({
             <tr key={expense._id}>
               <td>{expense.title}</td>
               <td>{expense.category}</td>
-              <td>${expense.amount}</td>
+              <td>KES {expense.amount}</td>
               <td>
                 <span
-                  className={`dashboard-pill ${expense.isLiability ? "dashboard-pill--warning" : "dashboard-pill--success"}`}
+                  className={`dashboard-pill KES {expense.isLiability ? "dashboard-pill--warning" : "dashboard-pill--success"}`}
                 >
                   {expense.isLiability ? "Liability (Unpaid)" : "Expense (Paid)"}
                 </span>

@@ -1,35 +1,8 @@
-import { useContext, useMemo, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+// src/components/layout/Navbar.jsx
+import { useContext } from "react";
+import { useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-
-const navGroups = [
-  {
-    label: "Workspace",
-    items: [
-      { to: "/", label: "Properties", icon: "P", roles: ["guest", "tenant", "agent", "admin"] },
-      { to: "/add", label: "Add Property", icon: "+", roles: ["agent", "admin"] },
-      { to: "/agent-dashboard", label: "Agent Dashboard", icon: "A", roles: ["agent", "admin"] },
-      { to: "/tenant-dashboard", label: "Tenant Portal", icon: "T", roles: ["tenant"] },
-      { to: "/admin", label: "Admin Dashboard", icon: "D", roles: ["admin"] },
-    ],
-  },
-  {
-    label: "Account",
-    items: [
-      { to: "/login", label: "Login", icon: "L", roles: ["guest"] },
-      { to: "/register", label: "Register", icon: "R", roles: ["guest"] },
-    ],
-  },
-];
-
-const getInitials = (name = "Guest") =>
-  name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
+import Badge from "../common/Badge";
 
 const routeTitles = {
   "/": "Property Portfolio",
@@ -41,110 +14,83 @@ const routeTitles = {
   "/register": "Create Account",
 };
 
-const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
-  const { pathname } = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const role = user?.role || "guest";
+const getInitials = (name = "Guest") =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
 
-  const visibleGroups = useMemo(
-    () =>
-      navGroups
-        .map((group) => ({
-          ...group,
-          items: group.items.filter((item) => item.roles.includes(role)),
-        }))
-        .filter((group) => group.items.length > 0),
-    [role],
-  );
+const Navbar = ({ 
+  onToggleSidebar,   // for desktop collapse
+  onOpenMobile,      // for mobile drawer
+  sidebarCollapsed   // to know if it's collapsed for search padding etc.
+}) => {
+  const { user } = useContext(AuthContext);
+  const { pathname } = useLocation();
 
   const pageTitle =
     routeTitles[pathname] ||
     (pathname.startsWith("/properties/") ? "Property Details" : "Workspace");
 
   return (
-    <div className={`app-frame ${sidebarOpen ? "sidebar-open" : ""}`}>
-      <button
-        type="button"
-        className="sidebar-backdrop"
-        aria-label="Close navigation"
-        onClick={() => setSidebarOpen(false)}
-      />
-
-      <aside className="sidebar" aria-label="Primary navigation">
-        <Link to="/" className="sidebar-header" onClick={() => setSidebarOpen(false)}>
-          <span className="brand-mark">DS</span>
-          <span className="brand-title">
-            <strong>Real Estate Manager</strong>
-            <span>Davis & Shirtliff style system</span>
-          </span>
-        </Link>
-
-        <nav className="sidebar-nav">
-          {visibleGroups.map((group) => (
-            <div className="nav-group" key={group.label}>
-              <span className="nav-group-label">{group.label}</span>
-              {group.items.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === "/"}
-                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <span className="nav-icon" aria-hidden="true">
-                    {item.icon}
-                  </span>
-                  <span>{item.label}</span>
-                </NavLink>
-              ))}
-            </div>
-          ))}
-        </nav>
-
-        {user && (
-          <div className="sidebar-footer">
-            <button type="button" className="dashboard-btn dashboard-btn--secondary full-width" onClick={logout}>
-              Logout
-            </button>
-          </div>
-        )}
-      </aside>
-
-      <header className="app-topbar">
-        <div className="dashboard-inline-actions">
+    <header className="h-16 border-b border-border bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/75 sticky top-0 z-30">
+      <div className="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center space-x-3">
+          {/* Hamburger – toggles sidebar collapse on desktop, opens drawer on mobile */}
           <button
             type="button"
-            className="icon-button mobile-menu-button"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open navigation"
+            className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            onClick={onToggleSidebar} // on desktop it will toggle collapse; on mobile it will open drawer via media query
+            aria-label="Toggle navigation"
           >
-            ☰
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
-          <div className="topbar-meta">
-            <span className="breadcrumb">Workspace / {pageTitle}</span>
-            <span className="topbar-title">{pageTitle}</span>
+
+          <div className="hidden sm:block">
+            <span className="text-sm text-muted-foreground">Workspace / </span>
+            <span className="text-sm font-medium text-foreground">{pageTitle}</span>
           </div>
         </div>
 
-        <div className="topbar-actions">
-          <label className="topbar-search">
-            <span aria-hidden="true">⌕</span>
-            <input type="search" placeholder="Search properties, tenants, reports" aria-label="Search" />
-          </label>
-          <button type="button" className="icon-button optional-mobile" aria-label="Notifications">
-            !
+        <div className="flex items-center space-x-4">
+          <div className="relative hidden md:block">
+            <input
+              type="search"
+              placeholder="Search properties, tenants, reports"
+              className="w-64 rounded-md border border-border bg-muted/50 px-3 py-1.5 pl-8 text-sm text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              aria-label="Search"
+            />
+            <span className="absolute left-2.5 top-2 text-muted-foreground">🔍</span>
+          </div>
+          <button
+            type="button"
+            className="relative p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Notifications"
+          >
+            <span className="text-base">🔔</span>
+            <span className="absolute top-0 right-0 w-2 h-2 bg-danger rounded-full" />
           </button>
-          <div className="user-chip">
-            <span className="avatar">{getInitials(user?.name)}</span>
-            <span className="user-chip-details">
-              <strong>{user?.name || "Guest User"}</strong>
-              <span className="role-badge">{role}</span>
+          <div className="flex items-center space-x-2 pl-2 border-l border-border">
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-blue text-white text-sm font-medium">
+              {getInitials(user?.name)}
             </span>
+            <div className="hidden sm:block">
+              <p className="text-sm font-medium text-foreground leading-tight">
+                {user?.name || "Guest User"}
+              </p>
+              <Badge variant={user?.role === 'admin' ? 'default' : 'success'} className="text-xs">
+                {user?.role || "guest"}
+              </Badge>
+            </div>
           </div>
         </div>
-      </header>
-    </div>
+      </div>
+    </header>
   );
 };
 

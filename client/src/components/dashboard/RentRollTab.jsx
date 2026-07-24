@@ -22,7 +22,7 @@ const RentRollTab = ({ properties, onUpdateTenant }) => {
             <div>
               <strong>{property.title}</strong>
               <p className="dashboard-subtitle">
-                Category: {property.houseType} | Required Rent: $
+                Category: {property.houseType} | Required Rent: KES
                 {property.price}
               </p>
             </div>
@@ -45,7 +45,7 @@ const RentRollTab = ({ properties, onUpdateTenant }) => {
               />
             </div>
             <div>
-              <label className="dashboard-label">Rent Paid ($)</label>
+              <label className="dashboard-label">Rent Paid (KES)</label>
               <input
                 type="number"
                 name="rentPaid"
@@ -54,7 +54,7 @@ const RentRollTab = ({ properties, onUpdateTenant }) => {
               />
             </div>
             <div>
-              <label className="dashboard-label">Rent Arrears ($)</label>
+              <label className="dashboard-label">Rent Arrears (KES)</label>
               <input
                 type="number"
                 name="rentArrears"

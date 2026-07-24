@@ -31,7 +31,7 @@ const OccupancyTab = ({
 
             <p className="dashboard-subtitle">{property.estate}, {property.county}</p>
             <p className="dashboard-card-value">
-              Rent: ${property.price}/mo
+              Rent: KES {property.price}/mo
             </p>
 
             <div
