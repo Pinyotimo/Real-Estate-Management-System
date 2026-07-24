@@ -33,7 +33,10 @@ const TenantDashboard = () => {
   };
 
   useEffect(() => {
-    fetchTenantData();
+    const loadTenantData = async () => {
+      await fetchTenantData();
+    };
+    loadTenantData();
   }, []);
 
   const handleMakePayment = async (e) => {
@@ -44,10 +47,11 @@ const TenantDashboard = () => {
         propertyId: data.property._id,
         ...payForm,
       });
-      alert("✅ Payment completed!");
+      alert("Payment completed!");
       setPayForm({ amount: "", paymentType: "rent", paymentMethod: "mpesa" });
       fetchTenantData();
     } catch (err) {
+      console.error(err);
       alert("Payment failed.");
     }
   };
@@ -60,10 +64,11 @@ const TenantDashboard = () => {
         propertyId: data.property._id,
         ...complaintForm,
       });
-      alert("📢 Complaint sent to landlord.");
+      alert("Complaint sent to landlord.");
       setComplaintForm({ title: "", category: "plumbing", description: "" });
       fetchTenantData();
     } catch (err) {
+      console.error(err);
       alert("Failed to submit ticket.");
     }
   };
@@ -71,9 +76,7 @@ const TenantDashboard = () => {
   if (loading) {
     return (
       <div className="dashboard-shell">
-        <p style={{ textAlign: "center", marginTop: "3rem", color: "var(--text-muted)" }}>
-          Loading Resident Portal...
-        </p>
+        <div className="dashboard-panel animate-shimmer" />
       </div>
     );
   }
@@ -81,11 +84,11 @@ const TenantDashboard = () => {
   if (error || !data) {
     return (
       <div className="dashboard-shell">
-        <div className="dashboard-panel" style={{ textAlign: "center" }}>
-          <p className="auth-error" style={{ display: "inline-block" }}>
+        <div className="dashboard-panel agent-error-panel">
+          <p className="auth-error">
             {error || "Something went wrong loading your portal."}
           </p>
-          <div style={{ marginTop: "1rem" }}>
+          <div>
             <button className="dashboard-btn" onClick={fetchTenantData}>
               Retry
             </button>
@@ -99,42 +102,48 @@ const TenantDashboard = () => {
 
   return (
     <div className="dashboard-shell">
-      <h2 className="dashboard-title">🔑 Resident & Business Tenant Portal</h2>
+      <div className="dashboard-space-between">
+        <div>
+          <h2 className="dashboard-title">Resident & Business Tenant Portal</h2>
+          <p className="dashboard-subtitle">View your unit, payments, tickets, and receipts.</p>
+        </div>
+        <button className="dashboard-btn dashboard-btn--outline" onClick={fetchTenantData}>
+          Refresh
+        </button>
+      </div>
 
-      {/* Tabs */}
       <div className="dashboard-tabs">
         <button
           onClick={() => setActiveTab("property")}
           className={`dashboard-tab ${activeTab === "property" ? "active" : ""}`}
         >
-          🏢 My Unit
+          My Unit
         </button>
         <button
           onClick={() => setActiveTab("payments")}
           className={`dashboard-tab ${activeTab === "payments" ? "active" : ""}`}
         >
-          💳 Pay Rent & Bills
+          Pay Rent & Bills
         </button>
         <button
           onClick={() => setActiveTab("complaints")}
           className={`dashboard-tab ${activeTab === "complaints" ? "active" : ""}`}
         >
-          🛠️ Report Issues ({complaints.length})
+          Report Issues ({complaints.length})
         </button>
         <button
           onClick={() => setActiveTab("receipts")}
           className={`dashboard-tab ${activeTab === "receipts" ? "active" : ""}`}
         >
-          🧾 Payment Receipts ({payments.length})
+          Payment Receipts ({payments.length})
         </button>
       </div>
 
-      {/* TAB 1: MY UNIT */}
       {activeTab === "property" && (
         <div>
           {!property ? (
-            <div className="dashboard-panel" style={{ textAlign: "center" }}>
-              <p style={{ color: "var(--text-muted)" }}>
+            <div className="dashboard-panel empty-state">
+              <p>
                 You do not have an assigned unit yet. Ask your landlord to
                 assign your house, warehouse, or business unit to your
                 registered account.
@@ -146,10 +155,8 @@ const TenantDashboard = () => {
                 <span className="dashboard-pill dashboard-pill--info">
                   Category: {property.houseType}
                 </span>
-                <h3 style={{ marginTop: "0.5rem" }}>{property.title}</h3>
-                <p style={{ color: "var(--text-muted)" }}>
-                  📍 {property.estate}, {property.county}
-                </p>
+                <h3 className="dashboard-section-title">{property.title}</h3>
+                <p className="dashboard-subtitle">{property.estate}, {property.county}</p>
                 <p>
                   <strong>Monthly Rent:</strong> ${property.price}
                 </p>
@@ -171,7 +178,7 @@ const TenantDashboard = () => {
               </div>
 
               <div className="dashboard-panel">
-                <h3>⚡ Utilities & Meter Info</h3>
+                <h3 className="dashboard-section-title">Utilities & Meter Info</h3>
                 <p>
                   <strong>Electricity Meter Number:</strong>{" "}
                   {property.electricityMeter || "N/A"}
@@ -200,10 +207,9 @@ const TenantDashboard = () => {
         </div>
       )}
 
-      {/* TAB 2: PAYMENTS */}
       {activeTab === "payments" && (
-        <div className="dashboard-panel" style={{ maxWidth: "500px", margin: "0 auto" }}>
-          <h3>Pay Rent or Bills</h3>
+        <div className="dashboard-panel">
+          <h3 className="dashboard-section-title">Pay Rent or Bills</h3>
           <form onSubmit={handleMakePayment} className="dashboard-form-stack">
             <div>
               <label className="dashboard-label">Payment Type</label>
@@ -247,19 +253,24 @@ const TenantDashboard = () => {
                 <option value="bank_transfer">Bank Transfer</option>
               </select>
             </div>
-            <button type="submit" className="dashboard-btn dashboard-btn--success">
+            <button
+              type="submit"
+              className="dashboard-btn dashboard-btn--success"
+            >
               Process Payment
             </button>
           </form>
         </div>
       )}
 
-      {/* TAB 3: REPORT COMPLAINTS */}
       {activeTab === "complaints" && (
         <div>
-          <h3>Submit Complaint / Ticket</h3>
-          <form onSubmit={handleComplaintSubmit} className="dashboard-form-stack dashboard-panel">
-            <div className="dashboard-form-grid" style={{ marginBottom: 0 }}>
+          <h3 className="dashboard-section-title">Submit Complaint / Ticket</h3>
+          <form
+            onSubmit={handleComplaintSubmit}
+            className="dashboard-form-stack dashboard-panel"
+          >
+            <div className="dashboard-form-grid">
               <input
                 type="text"
                 placeholder="Title (e.g. Electrical Fault)"
@@ -298,7 +309,7 @@ const TenantDashboard = () => {
               }
               required
               className="dashboard-input"
-              style={{ height: "80px" }}
+              rows="4"
             />
             <button type="submit" className="dashboard-btn">
               Submit Ticket
@@ -307,10 +318,8 @@ const TenantDashboard = () => {
         </div>
       )}
 
-      {/* TAB 4: RECEIPTS */}
       {activeTab === "receipts" && (
         <div className="dashboard-table-wrapper">
-          <h3>Payment Receipts</h3>
           <table className="dashboard-table">
             <thead>
               <tr>
@@ -324,7 +333,9 @@ const TenantDashboard = () => {
               {payments.map((p) => (
                 <tr key={p._id}>
                   <td>{p.transactionId}</td>
-                  <td style={{ textTransform: "capitalize" }}>{p.paymentType}</td>
+                  <td className="text-capitalize">
+                    {p.paymentType}
+                  </td>
                   <td>
                     <span className="dashboard-pill dashboard-pill--success">
                       ${p.amount}

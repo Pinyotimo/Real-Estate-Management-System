@@ -1,53 +1,72 @@
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
+import Card from '../common/Card';
+import { Input, Textarea } from '../common/Form';
+import Button from '../common/Button';
 
 const InquiryForm = ({ inquiry, setInquiry, onSubmit, sent }) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInquiry({ ...inquiry, [name]: value });
+  };
+
   return (
-    <div>
-      <h3 className="dashboard-section-title">Contact Agent</h3>
+    <Card className="space-y-4">
+      <h3 className="text-lg font-semibold text-foreground">Contact Agent</h3>
       {sent ? (
-        <div className="dashboard-pill dashboard-pill--success" style={{ display: "block", padding: "0.75rem", marginTop: "0.5rem" }}>
-          ✅ Inquiry sent! The agent will get back to you shortly.
+        <div className="p-4 text-sm text-success bg-success/10 rounded-md border border-success/20">
+          Inquiry sent. The agent will get back to you shortly.
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="dashboard-form-stack">
-          <input
+        <form onSubmit={onSubmit} className="space-y-4">
+          <Input
+            label="Your Name"
+            name="name"
             type="text"
-            placeholder="Your Name"
+            placeholder="Full name"
             required
             value={inquiry.name}
-            onChange={(e) => setInquiry({ ...inquiry, name: e.target.value })}
-            className="dashboard-input"
+            onChange={handleChange}
+            className="w-full"
           />
-          <input
+          <Input
+            label="Your Email"
+            name="email"
             type="email"
-            placeholder="Your Email"
+            placeholder="name@example.com"
             required
             value={inquiry.email}
-            onChange={(e) => setInquiry({ ...inquiry, email: e.target.value })}
-            className="dashboard-input"
+            onChange={handleChange}
+            className="w-full"
           />
-          <input
+          <Input
+            label="Phone Number"
+            name="phone"
             type="tel"
-            placeholder="Phone Number"
+            placeholder="+254..."
             required
             value={inquiry.phone}
-            onChange={(e) => setInquiry({ ...inquiry, phone: e.target.value })}
-            className="dashboard-input"
+            onChange={handleChange}
+            className="w-full"
           />
-          <textarea
+          <Textarea
+            label="Message"
+            name="message"
             placeholder="I am interested in this property..."
             required
             value={inquiry.message}
-            onChange={(e) => setInquiry({ ...inquiry, message: e.target.value })}
-            className="dashboard-input"
-            style={{ minHeight: "80px" }}
+            onChange={handleChange}
+            rows="4"
+            className="w-full"
           />
-          <button type="submit" className="dashboard-btn dashboard-btn--success">
-            Send Message
-          </button>
+          <div className="flex justify-end">
+            <Button type="submit" variant="success">
+              Send Message
+            </Button>
+          </div>
         </form>
       )}
-    </div>
+    </Card>
   );
 };
 

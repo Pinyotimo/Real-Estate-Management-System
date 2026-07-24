@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const propertySchema = new mongoose.Schema(
   {
@@ -10,30 +10,52 @@ const propertySchema = new mongoose.Schema(
     houseType: {
       type: String,
       required: true,
-      enum: ['Residential House', 'Warehouse', 'Business Space / Office', 'Apartment', 'Shop / Commercial'],
+      enum: [
+        "Residential House",
+        "Warehouse",
+        "Business Space / Office",
+        "Apartment",
+        "Shop / Commercial",
+      ],
     },
     bedrooms: { type: Number, default: 0 },
     bathrooms: { type: Number, default: 0 },
+    squareMeters: { type: Number, default: 0 },
+    condition: { type: String, default: "Excellent" },
+    mapLocation: { type: String, default: "" },
     images: [{ type: String }],
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, //  Agent
+    video: { type: String, default: "" },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, //  Agent
 
     // Occupancy & Tenant Linkage
-    status: { type: String, enum: ['vacant', 'occupied'], default: 'vacant' },
-    tenantUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
-    tenantName: { type: String, default: '' },
-    tenantPhone: { type: String, default: '' },
+    status: { type: String, enum: ["vacant", "occupied"], default: "vacant" },
+    tenantUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    tenantName: { type: String, default: "" },
+    tenantPhone: { type: String, default: "" },
 
     // Financial Balances
     rentPaid: { type: Number, default: 0 },
     rentArrears: { type: Number, default: 0 },
 
     // Utility & Operations Tracking
-    electricityMeter: { type: String, default: 'N/A' },
-    wifiStatus: { type: String, enum: ['active', 'disconnected', 'pending'], default: 'active' },
-    repairStatus: { type: String, enum: ['none', 'pending', 'in_progress', 'completed'], default: 'none' },
-    repairNotes: { type: String, default: '' },
+    electricityMeter: { type: String, default: "N/A" },
+    wifiStatus: {
+      type: String,
+      enum: ["active", "disconnected", "pending"],
+      default: "active",
+    },
+    repairStatus: {
+      type: String,
+      enum: ["none", "pending", "in_progress", "completed"],
+      default: "none",
+    },
+    repairNotes: { type: String, default: "" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-module.exports = mongoose.model('Property', propertySchema);
+module.exports = mongoose.model("Property", propertySchema);

@@ -18,11 +18,10 @@ const RentRollTab = ({ properties, onUpdateTenant }) => {
             key={property._id}
             onSubmit={(event) => onUpdateTenant(event, property._id)}
             className="dashboard-panel dashboard-form-grid"
-            style={{ marginBottom: "1rem" }}
           >
             <div>
               <strong>{property.title}</strong>
-              <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
+              <p className="dashboard-subtitle">
                 Category: {property.houseType} | Required Rent: $
                 {property.price}
               </p>

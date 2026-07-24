@@ -26,42 +26,59 @@ const seedDatabase = async () => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash("password123", salt);
 
-    // 3. Create Users
-    const agent = await User.create({
-  name: "John Agent (Prime Properties)",
-  email: "agent@test.com",
-  password: hashedPassword,
-  phone: "+254700111222",
-  role: "agent",
-});
+    // 3. Create Users (test accounts)
+    const landlord = await User.create({
+      name: "John Landlord (Prime Properties)",
+      email: "landlord@test.com",
+      password: hashedPassword,
+      phone: "+254700111222",
+      role: "agent",
+    });
 
-const admin = await User.create({
-  name: "System Admin",
-  email: "admin@test.com",
-  password: hashedPassword,
-  phone: "+2547001112244",
-  role: "admin",
-});
+    const tenantResidential = await User.create({
+      name: "Alice Johnson",
+      email: "alice@test.com",
+      password: hashedPassword,
+      phone: "+254711333444",
+      role: "tenant",
+    });
 
-const tenantResidential = await User.create({
-  name: "Alice Johnson",
-  email: "alice@test.com",
-  password: hashedPassword,
-  phone: "+254711333444",
-  role: "tenant",
-});
+    const tenantCommercial = await User.create({
+      name: "Apex Logistics Ltd",
+      email: "apex@test.com",
+      password: hashedPassword,
+      phone: "+254722555666",
+      role: "tenant",
+    });
 
-const tenantCommercial = await User.create({
-  name: "Apex Logistics Ltd",
-  email: "apex@test.com",
-  password: hashedPassword,
-  phone: "+254722555666",
-  role: "tenant",
-});
+    // 3b. Create Demo Accounts (match Login.jsx Quick Demo Login buttons)
+    const demoAdmin = await User.create({
+      name: "Demo Admin",
+      email: "admin@demo.com",
+      password: hashedPassword,
+      phone: "+254700000001",
+      role: "admin",
+    });
+
+    const demoAgent = await User.create({
+      name: "Demo Agent",
+      email: "agent@demo.com",
+      password: hashedPassword,
+      phone: "+254700000002",
+      role: "agent",
+    });
+
+    const demoTenant = await User.create({
+      name: "Demo Tenant",
+      email: "tenant@demo.com",
+      password: hashedPassword,
+      phone: "+254700000003",
+      role: "tenant",
+    });
 
     console.log(
-  "👤 Users seeded (agent: agent@test.com | admin: admin@test.com | tenant: alice@test.com | Password: password123)",
-);
+      "👤 Users seeded (Landlord: landlord@test.com | Demo: admin@demo.com, agent@demo.com, tenant@demo.com | Password: password123)",
+    );
 
     // 4. Create Properties (House, Warehouse, Business Space)
     const house = await Property.create({
@@ -73,7 +90,7 @@ const tenantCommercial = await User.create({
       houseType: "Residential House",
       bedrooms: 3,
       bathrooms: 2,
-      user: agent._id,
+      user: landlord._id,
       status: "occupied",
       tenantUser: tenantResidential._id,
       tenantName: tenantResidential.name,
@@ -93,13 +110,13 @@ const tenantCommercial = await User.create({
       estate: "Industrial Area",
       county: "Nairobi",
       houseType: "Warehouse",
-      user: agent._id,
+      user: landlord._id,
       status: "occupied",
       tenantUser: tenantCommercial._id,
       tenantName: tenantCommercial.name,
       tenantPhone: tenantCommercial.phone,
       rentPaid: 3500,
-      rentArrears: 500, // Partial arrears remaining
+      rentArrears: 500,
       electricityMeter: "3PHASE-445511",
       wifiStatus: "active",
       repairStatus: "in_progress",
@@ -113,8 +130,8 @@ const tenantCommercial = await User.create({
       estate: "CBD",
       county: "Nairobi",
       houseType: "Business Space / Office",
-      user: agent._id,
-      status: "vacant", // Vacant unit available for assignment
+      user: landlord._id,
+      status: "vacant",
     });
 
     const retailShop = await Property.create({
@@ -125,12 +142,34 @@ const tenantCommercial = await User.create({
       estate: "Westlands",
       county: "Nairobi",
       houseType: "Shop / Commercial",
-      user: agent._id,
+      user: landlord._id,
       status: "vacant",
     });
 
+    // 4b. Give the demo agent a listing and demo tenant an assigned unit
+    const demoUnit = await Property.create({
+      title: "Demo Apartment - Riverside Suites",
+      description: "Sample unit created for demo login walkthroughs.",
+      price: 900,
+      estate: "Riverside",
+      county: "Nairobi",
+      houseType: "Apartment",
+      bedrooms: 2,
+      bathrooms: 1,
+      user: demoAgent._id,
+      status: "occupied",
+      tenantUser: demoTenant._id,
+      tenantName: demoTenant.name,
+      tenantPhone: demoTenant.phone,
+      rentPaid: 900,
+      rentArrears: 0,
+      electricityMeter: "DEMO-000001",
+      wifiStatus: "active",
+      repairStatus: "none",
+    });
+
     console.log(
-      "🏢 Properties seeded (1 House occupied, 1 Warehouse occupied, 1 Office vacant, 1 Shop available)",
+      "🏢 Properties seeded (1 House occupied, 1 Warehouse occupied, 1 Office vacant, 1 Shop available, 1 Demo unit occupied)",
     );
 
     // 5. Seed Payments
@@ -159,25 +198,33 @@ const tenantCommercial = await User.create({
         paymentMethod: "mpesa",
         transactionId: "TXN-MPESA-11029",
       },
+      {
+        tenant: demoTenant._id,
+        property: demoUnit._id,
+        amount: 900,
+        paymentType: "rent",
+        paymentMethod: "mpesa",
+        transactionId: "TXN-MPESA-DEMO01",
+      },
     ]);
 
     // 6. Seed Expenses & Liabilities
     await Expense.create([
       {
-        user: agent._id,
+        user: landlord._id,
         property: warehouse._id,
         title: "Shutter Door Roller Replacement",
         category: "repairs",
         amount: 400,
-        isLiability: false, // Paid expense
+        isLiability: false,
       },
       {
-        user: agent._id,
+        user: landlord._id,
         property: house._id,
         title: "Annual Land Rates & Property Tax",
         category: "taxes",
         amount: 650,
-        isLiability: true, // Pending unpaid liability
+        isLiability: true,
       },
     ]);
 

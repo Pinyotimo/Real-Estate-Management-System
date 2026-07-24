@@ -8,7 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
 const inquiryRoutes = require("./routes/inquiryRoutes");
 const userRoutes = require("./routes/userRoutes");
-const adminRoutes = require('./routes/adminRoutes');
+const adminRoutes = require("./routes/adminRoutes");
 
 // Import Custom Error Middleware
 const errorMiddleware = require("./middleware/errorMiddleware");
@@ -19,9 +19,12 @@ connectDB();
 // Initialize Express App
 const app = express();
 
+const path = require("path");
+
 // Global Middleware
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Root Health Check Route
 app.get("/", (req, res) => {
@@ -33,9 +36,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/inquiries", inquiryRoutes);
 app.use("/api/users", userRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/agent', require('./routes/agentRoutes'));
-app.use('/api/tenant', require('./routes/tenantRoutes'));
+app.use("/api/admin", adminRoutes);
+app.use("/api/agent", require("./routes/agentRoutes"));
+app.use("/api/tenant", require("./routes/tenantRoutes"));
 
 // Error Handling Middleware (must be after routes)
 app.use(errorMiddleware);

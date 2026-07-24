@@ -20,57 +20,30 @@ const MediaGallery = ({ property, activeMedia, onMediaChange }) => {
 
   return (
     <div className="dashboard-stack">
-      {/* Main viewer */}
-      <div
-        className="dashboard-panel"
-        style={{
-          height: "420px",
-          background: "var(--surface-muted)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          padding: 0,
-        }}
-      >
+      <div className="dashboard-panel media-viewer">
         {activeMedia ? (
           isVideo(activeMedia) ? (
-            <video src={activeMedia.url} controls style={{ width: "100%", maxHeight: "100%" }} />
+            <video src={activeMedia.url} controls />
           ) : (
-            <img src={activeMedia.url} alt="Main view" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={activeMedia.url} alt="Main view" />
           )
         ) : (
           <span className="dashboard-text-muted">No media uploaded</span>
         )}
       </div>
 
-      {/* Thumbnails */}
       {allMedia.length > 0 && (
-        <div className="dashboard-inline-actions" style={{ overflowX: "auto", paddingBottom: "0.5rem", gap: "0.5rem" }}>
+        <div className="media-thumbs" aria-label="Property media thumbnails">
           {allMedia.map((item, idx) => (
             <div
               key={idx}
               onClick={() => onMediaChange(item)}
-              style={{
-                width: "80px",
-                height: "60px",
-                flexShrink: 0,
-                cursor: "pointer",
-                border: activeMedia?.url === item.url ? "3px solid var(--primary)" : "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                overflow: "hidden",
-                background: "var(--surface-muted)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "0.75rem",
-                color: "var(--text-muted)",
-              }}
+              className={`media-thumb ${activeMedia?.url === item.url ? "is-active" : ""}`}
             >
               {isVideo(item) ? (
-                <span>▶ Video</span>
+                <span>Video</span>
               ) : (
-                <img src={item.url} alt={`thumb-${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={item.url} alt={`Thumbnail ${idx + 1}`} />
               )}
             </div>
           ))}

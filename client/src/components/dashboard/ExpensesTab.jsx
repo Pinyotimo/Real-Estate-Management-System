@@ -51,32 +51,34 @@ const ExpensesTab = ({
     </form>
 
     <h3 className="dashboard-section-title">Logged Expenses & Liabilities</h3>
-    <table className="dashboard-table">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Category</th>
-          <th>Amount</th>
-          <th>Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        {expenses.map((expense) => (
-          <tr key={expense._id}>
-            <td>{expense.title}</td>
-            <td>{expense.category}</td>
-            <td>${expense.amount}</td>
-            <td>
-              <span
-                className={`dashboard-pill ${expense.isLiability ? "dashboard-pill--warning" : "dashboard-pill--success"}`}
-              >
-                {expense.isLiability ? "Liability (Unpaid)" : "Expense (Paid)"}
-              </span>
-            </td>
+    <div className="dashboard-table-wrapper">
+      <table className="dashboard-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Type</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {expenses.map((expense) => (
+            <tr key={expense._id}>
+              <td>{expense.title}</td>
+              <td>{expense.category}</td>
+              <td>${expense.amount}</td>
+              <td>
+                <span
+                  className={`dashboard-pill ${expense.isLiability ? "dashboard-pill--warning" : "dashboard-pill--success"}`}
+                >
+                  {expense.isLiability ? "Liability (Unpaid)" : "Expense (Paid)"}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   </div>
 );
 

@@ -3,7 +3,7 @@ const Expense = require('../models/Expense');
 const Inquiry = require('../models/Inquiry');
 const User = require('../models/User');
 
-// @desc    Get List of Registered Tenants/Buyers
+// @desc    Get List of Registered Tenants
 // @route   GET /api/agent/tenants
 // @access  Private (Agent / Admin)
 const getTenantsList = async (req, res) => {

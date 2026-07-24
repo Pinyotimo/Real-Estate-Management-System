@@ -65,6 +65,7 @@ const PropertyDetail = () => {
     }
   };
 
+  // Check if current user is owner or admin
   const isOwnerOrAdmin =
     user &&
     property &&
@@ -72,32 +73,35 @@ const PropertyDetail = () => {
 
   if (!property) {
     return (
-      <div className="dashboard-shell" style={{ textAlign: "center", marginTop: "2rem" }}>
-        <p className="dashboard-subtitle">Loading property details...</p>
+      <div className="dashboard-shell">
+        <div className="dashboard-panel animate-shimmer" />
       </div>
     );
   }
 
   return (
-    <div className="dashboard-shell" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "2rem" }}>
-      {/* Left column: Media + Info */}
+    <div className="dashboard-shell property-detail-layout">
       <div className="dashboard-stack">
         <MediaGallery property={property} activeMedia={activeMedia} onMediaChange={setActiveMedia} />
         <PropertyInfo property={property} />
       </div>
 
-      {/* Right column: Inquiry + Owner actions */}
-      <div>
-        <div className="dashboard-panel" style={{ position: "sticky", top: "2rem" }}>
+      <aside>
+        <div className="dashboard-panel sticky-panel">
           <InquiryForm
             inquiry={inquiry}
             setInquiry={setInquiry}
             onSubmit={handleInquirySubmit}
             sent={sent}
           />
-          {isOwnerOrAdmin && <OwnerActions onDelete={handleDelete} />}
+          {isOwnerOrAdmin && (
+            <OwnerActions
+              onDelete={handleDelete}
+              onEdit={() => navigate(`/properties/${property._id}/edit`)} // ✅ fixed: use property._id or id
+            />
+          )}
         </div>
-      </div>
+      </aside>
     </div>
   );
 };

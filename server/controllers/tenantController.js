@@ -4,7 +4,7 @@ const Payment = require('../models/Payment');
 
 // @desc    Get assigned house/warehouse/business unit, complaints, and receipts
 // @route   GET /api/tenant/overview
-// @access  Private (Tenant/Buyer)
+// @access  Private (Tenant/
 const getTenantOverview = async (req, res) => {
   try {
     const tenantId = req.user._id;
@@ -29,7 +29,7 @@ const getTenantOverview = async (req, res) => {
 
 // @desc    Process Rent or Utility Payment
 // @route   POST /api/tenant/pay
-// @access  Private (Tenant/Buyer)
+// @access  Private (Tenant
 const makePayment = async (req, res) => {
   try {
     const { propertyId, amount, paymentType, paymentMethod } = req.body;

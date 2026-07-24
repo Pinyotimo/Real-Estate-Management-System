@@ -15,6 +15,8 @@ import AdminDashboard from "./features/dashboard/admin/AdminDashboard";
 import AgentDashboard from "./features/dashboard/agent/AgentDashboard";
 import TenantDashboard from "./features/dashboard/tenant/TenantDashboard";
 import PropertyList from "./components/PropertyList";
+import EditProperty from "./components/PropertyDetail/EditProperty";
+
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -29,7 +31,7 @@ const AgentRoute = ({ children }) => {
   return children;
 };
 
-// 👑 Strictly guard Admin Dashboard
+// Strictly guard Admin Dashboard
 const AdminRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
   if (!user) return <Navigate to="/login" />;
@@ -41,44 +43,52 @@ function AppRoutes() {
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<PropertyList />} />
-        <Route
-          path="/add"
-          element={
-            <AgentRoute>
-              <AddProperty />
-            </AgentRoute>
-          }
-        />
-        <Route path="/properties/:id" element={<PropertyDetail />} />
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/agent-dashboard"
-          element={
-            <AgentRoute>
-              <AgentDashboard />
-            </AgentRoute>
-          }
-        />
-        <Route
-          path="/tenant-dashboard"
-          element={
-            <ProtectedRoute>
-              <TenantDashboard />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      <div className="app-content">
+        <main className="app-main">
+          <Routes>
+            <Route path="/" element={<PropertyList />} />
+            <Route
+              path="/add"
+              element={
+                <AgentRoute>
+                  <AddProperty />
+                </AgentRoute>
+              }
+            />
+            <Route path="/properties/:id" element={<PropertyDetail />} />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/properties/:id/edit" element={<EditProperty />} />
+            <Route
+              path="/agent-dashboard"
+              element={
+                <AgentRoute>
+                  <AgentDashboard />
+                </AgentRoute>
+              }
+            />
+            <Route
+              path="/tenant-dashboard"
+              element={
+                <ProtectedRoute>
+                  <TenantDashboard />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </main>
+      </div>
+      <footer className="app-footer">
+        Real Estate Management System
+      </footer>
     </Router>
   );
 }
