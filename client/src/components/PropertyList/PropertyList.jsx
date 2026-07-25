@@ -56,6 +56,17 @@ const PropertyList = () => {
 
   return (
     <div className="dashboard-shell">
+      <div className="dashboard-space-between">
+        <div>
+          <h1 className="dashboard-title">Property Portfolio</h1>
+          <p className="dashboard-subtitle">
+            Search, compare, and open detailed property records.
+          </p>
+        </div>
+        <button type="button" className="dashboard-btn dashboard-btn--outline">
+          Export
+        </button>
+      </div>
       <FilterForm
         filters={filters}
         onInputChange={handleInputChange}
@@ -64,11 +75,13 @@ const PropertyList = () => {
       />
 
       {loading ? (
-        <p style={{ textAlign: "center", marginTop: "2rem", color: "var(--text-muted)" }}>
-          Searching properties...
-        </p>
+        <div className="dashboard-card-grid dashboard-card-grid--property">
+          <div className="dashboard-card animate-shimmer" />
+          <div className="dashboard-card animate-shimmer" />
+          <div className="dashboard-card animate-shimmer" />
+        </div>
       ) : properties.length === 0 ? (
-        <div style={{ textAlign: "center", margin: "3rem 0", color: "var(--text-muted)" }}>
+        <div className="empty-state">
           <h3>No properties match your filter criteria.</h3>
           <p>Try resetting filters or adjusting your search parameters.</p>
         </div>

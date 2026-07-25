@@ -14,20 +14,20 @@ const seedUsers = async () => {
 
     // Clear existing demo users if present
     await User.deleteMany({
-      email: { $in: ['admin@demo.com', 'agent@demo.com', 'buyer@demo.com'] },
+      email: { $in: ['admin@test.com', 'agent@test.com', 'tenant@demo.com'] },
     });
 
     // Create 3 fresh accounts
     await User.create([
-      { name: 'System Admin', email: 'admin@demo.com', password: 'password123', role: 'admin' },
-      { name: 'Sarah Agent', email: 'agent@demo.com', password: 'password123', role: 'agent' },
-      { name: 'John Buyer', email: 'buyer@demo.com', password: 'password123', role: 'buyer' },
+      { name: 'System Admin', email: 'admin@test.com', password: 'password123', role: 'admin' },
+      { name: 'Sarah Agent', email: 'agent@test.com', password: 'password123', role: 'agent' },
+      { name: 'John Tenant', email: 'tenant@test.com', password: 'password123', role: 'tenant' },
     ]);
 
     console.log('✅ Demo users created successfully!');
-    console.log('🔑 Admin: admin@demo.com | password123');
-    console.log('🔑 Agent: agent@demo.com | password123');
-    console.log('🔑 Buyer: buyer@demo.com | password123');
+    console.log('🔑 Admin: admin@test.com | password123');
+    console.log('🔑 Agent: agent@test.com | password123');
+    console.log('🔑 Tenant: tenant@test.com | password123');
     process.exit(0);
   } catch (error) {
     console.error('❌ Error seeding users:', error);

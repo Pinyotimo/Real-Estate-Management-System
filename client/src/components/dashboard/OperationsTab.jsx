@@ -5,16 +5,15 @@ const OperationsTab = ({ properties, onUpdateOperations }) => (
     </h3>
     {properties.map((property) => (
       <form
-        key={property._id}
-        onSubmit={(event) => onUpdateOperations(event, property._id)}
-        className="dashboard-panel dashboard-form-grid"
-        style={{ marginBottom: "1rem" }}
-      >
+      key={property._id}
+      onSubmit={(event) => onUpdateOperations(event, property._id)}
+      className="dashboard-panel dashboard-form-grid"
+    >
         <div>
           <strong>{property.title}</strong>
         </div>
         <div>
-          <label className="dashboard-label">⚡ Electricity Meter No</label>
+          <label className="dashboard-label">Electricity Meter No</label>
           <input
             type="text"
             name="electricityMeter"
@@ -23,7 +22,7 @@ const OperationsTab = ({ properties, onUpdateOperations }) => (
           />
         </div>
         <div>
-          <label className="dashboard-label">📶 WiFi Status</label>
+          <label className="dashboard-label">WiFi Status</label>
           <select
             name="wifiStatus"
             defaultValue={property.wifiStatus}
@@ -35,7 +34,7 @@ const OperationsTab = ({ properties, onUpdateOperations }) => (
           </select>
         </div>
         <div>
-          <label className="dashboard-label">🛠️ Repair Status</label>
+          <label className="dashboard-label">Repair Status</label>
           <select
             name="repairStatus"
             defaultValue={property.repairStatus}

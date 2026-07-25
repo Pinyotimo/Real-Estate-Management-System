@@ -1,93 +1,115 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import { useContext } from "react";
-import { AuthProvider, AuthContext } from "./context/AuthContext";
-import Navbar from "./components/layout/Navbar";
-import AddProperty from "./features/property/AddProperty";
-import PropertyDetail from "./components/PropertyDetail";
-import Login from "./features/auth/Login";
-import Register from "./features/auth/Register";
-import AdminDashboard from "./features/dashboard/admin/AdminDashboard";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { NotificationsProvider } from "./components/Notifications/NotificationsContext";
+import Layout from "./components/layout/Layout";
+import PropertyList from "./components/PropertyList/PropertyList";
+import PropertyDetail from "./components/PropertyDetail/PropertyDetail";
+import EditProperty from "./components/PropertyDetail/EditProperty";
+import AddProperty from "./components/PropertyList/AddProperty";
 import AgentDashboard from "./features/dashboard/agent/AgentDashboard";
 import TenantDashboard from "./features/dashboard/tenant/TenantDashboard";
-import PropertyList from "./components/PropertyList";
+import AdminDashboard from "./features/dashboard/admin/AdminDashboard";
+import Login from "./features/auth/Login";
+import Register from "./features/auth/Register";
+import MyProperties from "./components/PropertyList/MyProperties";
+import NotificationsPage from "./components/Notifications/NotificationsPage";
 
+// ----- Route Guards -----
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   return user ? children : <Navigate to="/login" />;
 };
 
 const AgentRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "agent" && user.role !== "admin")
     return <Navigate to="/" />;
   return children;
 };
 
-// 👑 Strictly guard Admin Dashboard
 const AdminRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "admin") return <Navigate to="/" />;
   return children;
 };
 
-function AppRoutes() {
-  return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<PropertyList />} />
-        <Route
-          path="/add"
-          element={
-            <AgentRoute>
-              <AddProperty />
-            </AgentRoute>
-          }
-        />
-        <Route path="/properties/:id" element={<PropertyDetail />} />
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/agent-dashboard"
-          element={
-            <AgentRoute>
-              <AgentDashboard />
-            </AgentRoute>
-          }
-        />
-        <Route
-          path="/tenant-dashboard"
-          element={
-            <ProtectedRoute>
-              <TenantDashboard />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
-  );
-}
-
 function App() {
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <NotificationsProvider>
+          <Routes>
+            {/* Routes with Layout (sidebar + navbar) */}
+            <Route element={<Layout />}>
+              <Route path="/" element={<PropertyList />} />
+              <Route path="/properties/:id" element={<PropertyDetail />} />
+              <Route
+                path="/properties/:id/edit"
+                element={
+                  <AgentRoute>
+                    <EditProperty />
+                  </AgentRoute>
+                }
+              />
+              <Route
+                path="/add"
+                element={
+                  <AgentRoute>
+                    <AddProperty />
+                  </AgentRoute>
+                }
+              />
+              <Route
+                path="/agent-dashboard"
+                element={
+                  <AgentRoute>
+                    <AgentDashboard />
+                  </AgentRoute>
+                }
+              />
+              <Route
+                path="/tenant-dashboard"
+                element={
+                  <ProtectedRoute>
+                    <TenantDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-properties"
+                element={
+                  <AgentRoute>
+                    <MyProperties />
+                  </AgentRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <NotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+
+            {/* Auth routes without Layout (full-screen) */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </NotificationsProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

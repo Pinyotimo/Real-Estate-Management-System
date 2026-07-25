@@ -18,12 +18,11 @@ const RentRollTab = ({ properties, onUpdateTenant }) => {
             key={property._id}
             onSubmit={(event) => onUpdateTenant(event, property._id)}
             className="dashboard-panel dashboard-form-grid"
-            style={{ marginBottom: "1rem" }}
           >
             <div>
               <strong>{property.title}</strong>
-              <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                Category: {property.houseType} | Required Rent: $
+              <p className="dashboard-subtitle">
+                Category: {property.houseType} | Required Rent: KES
                 {property.price}
               </p>
             </div>
@@ -46,7 +45,7 @@ const RentRollTab = ({ properties, onUpdateTenant }) => {
               />
             </div>
             <div>
-              <label className="dashboard-label">Rent Paid ($)</label>
+              <label className="dashboard-label">Rent Paid (KES)</label>
               <input
                 type="number"
                 name="rentPaid"
@@ -55,7 +54,7 @@ const RentRollTab = ({ properties, onUpdateTenant }) => {
               />
             </div>
             <div>
-              <label className="dashboard-label">Rent Arrears ($)</label>
+              <label className="dashboard-label">Rent Arrears (KES)</label>
               <input
                 type="number"
                 name="rentArrears"

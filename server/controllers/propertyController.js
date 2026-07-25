@@ -111,6 +111,9 @@ const createProperty = async (req, res) => {
       houseType,
       bedrooms,
       bathrooms,
+      squareMeters,
+      condition,
+      mapLocation,
     } = req.body;
     const normalizedHouseType = normalizeHouseType(houseType);
 
@@ -123,6 +126,9 @@ const createProperty = async (req, res) => {
       houseType: normalizedHouseType,
       bedrooms,
       bathrooms,
+      squareMeters: Number(squareMeters) || 0,
+      condition: condition || "Excellent",
+      mapLocation: mapLocation || "",
       user: req.user._id,
     });
 

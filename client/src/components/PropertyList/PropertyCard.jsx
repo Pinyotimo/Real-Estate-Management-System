@@ -1,103 +1,113 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+ // Adjust path to match your file structure
 
-const PropertyCard = ({ property }) => {
+const PropertyCard = ({ property, onSave }) => {
   const {
     _id,
-    title,
-    price,
-    images,
+    title = "Untitled Property",
+    price = 0,
+    images = [],
     estate,
     county,
     location,
     houseType,
     bedrooms,
     bathrooms,
-    description,
-  } = property;
+    status = "available",
+  } = property || {};
 
   const imageUrl = images && images.length > 0 ? images[0] : null;
   const locationText =
     estate && county ? `${estate}, ${county}` : location || "Location N/A";
 
+  const handleSaveClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onSave) {
+      onSave(property);
+    }
+  };
+
   return (
-    <Link to={`/properties/${_id}`} className="dashboard-link" style={{ textDecoration: "none" }}>
-      <div className="dashboard-card" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={title}
-            style={{
-              width: "100%",
-              height: "200px",
-              objectFit: "cover",
-              borderRadius: "var(--radius) var(--radius) 0 0",
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              height: "200px",
-              background: "var(--surface-muted)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--text-muted)",
-              borderRadius: "var(--radius) var(--radius) 0 0",
-            }}
-          >
-            No Image Available
+    <Link to={`/properties/${_id}`} className="property-card-link">
+      <article className="dashboard-card property-card">
+        <div className="property-card-media">
+          {imageUrl ? (
+            <img src={imageUrl} alt={title} loading="lazy" />
+          ) : (
+            <span>No image available</span>
+          )}
+        </div>
+
+        <div className="dashboard-stack">
+          <div className="dashboard-space-between">
+            <h3 className="dashboard-section-title">{title}</h3>
+            <span
+              className={`dashboard-pill ${
+                status.toLowerCase() === "available"
+                  ? "dashboard-pill--success"
+                  : ""
+              }`}
+            >
+              {status}
+            </span>
           </div>
-        )}
 
-        <div style={{ padding: "1rem", flex: 1, display: "flex", flexDirection: "column" }}>
-          <h3 className="dashboard-title" style={{ fontSize: "1.1rem", margin: "0 0 0.5rem" }}>
-            {title}
-          </h3>
-          <p className="dashboard-card-value" style={{ fontSize: "1.2rem", color: "var(--success)" }}>
-            ${Number(price).toLocaleString()}
-          </p>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", margin: "0 0 0.5rem" }}>
-            📍 {locationText}
+          <p className="dashboard-card-value">
+            KES {Number(price || 0).toLocaleString()}
           </p>
 
-          <div className="dashboard-inline-actions" style={{ flexWrap: "wrap", marginBottom: "0.75rem" }}>
+          <p className="dashboard-subtitle">{locationText}</p>
+
+          <div className="dashboard-inline-actions">
             {houseType && (
-              <span className="dashboard-pill dashboard-pill--info">{houseType}</span>
+              <span className="dashboard-pill dashboard-pill--info">
+                {houseType}
+              </span>
             )}
             {bedrooms > 0 && (
-              <span className="dashboard-pill" style={{ background: "var(--surface-muted)", color: "var(--text-subtle)" }}>
-                🛏️ {bedrooms} Bed
-              </span>
+              <span className="dashboard-pill">{bedrooms} Bed</span>
             )}
             {bathrooms > 0 && (
-              <span className="dashboard-pill" style={{ background: "var(--surface-muted)", color: "var(--text-subtle)" }}>
-                🚿 {bathrooms} Bath
-              </span>
+              <span className="dashboard-pill">{bathrooms} Bath</span>
             )}
           </div>
 
-          <p
-            style={{
-              color: "var(--text-subtle)",
-              fontSize: "0.9rem",
-              margin: 0,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {description}
-          </p>
+          <div className="dashboard-inline-actions">
+            <span className="dashboard-btn dashboard-btn--outline">
+              View Details
+            </span>
+            <button
+              type="button"
+              className="dashboard-btn dashboard-btn--ghost"
+              onClick={handleSaveClick}
+            >
+              Save
+            </button>
+          </div>
         </div>
-      </div>
+      </article>
     </Link>
   );
 };
 
 PropertyCard.propTypes = {
-  property: PropTypes.object.isRequired,
+  property: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    images: PropTypes.arrayOf(PropTypes.string),
+    estate: PropTypes.string,
+    county: PropTypes.string,
+    location: PropTypes.string,
+    houseType: PropTypes.string,
+    bedrooms: PropTypes.number,
+    bathrooms: PropTypes.number,
+    status: PropTypes.string,
+  }).isRequired,
+  onSave: PropTypes.func,
 };
 
 export default PropertyCard;

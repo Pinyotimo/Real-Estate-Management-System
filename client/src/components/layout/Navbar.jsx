@@ -1,130 +1,74 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { Menu, Search } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
+import NotificationBell from "../Notifications/NotificationBell";
 
-const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
+const routeTitles = {
+  "/": "Property Portfolio",
+  "/add": "Add Property",
+  "/my-properties": "My Properties",
+  "/admin": "Admin Dashboard",
+  "/agent-dashboard": "Agent Dashboard",
+  "/tenant-dashboard": "Tenant Portal",
+  "/notifications": "Notifications",
+  "/login": "Sign In",
+  "/register": "Create Account",
+};
 
-  const isAgentOrAdmin =
-    user && (user.role === "agent" || user.role === "admin");
-  const isAdmin = user && user.role === "admin";
+const getInitials = (name = "Guest") =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+
+const Navbar = ({ onToggleSidebar, breadcrumb }) => {
+  const { user } = useContext(AuthContext);
+  const { pathname } = useLocation();
+
+  const pageTitle =
+    routeTitles[pathname] ||
+    (pathname.startsWith("/properties/") ? "Property Details" : "Workspace");
 
   return (
-    <nav
-      style={{
-        padding: "1rem 2rem",
-        background: "#1e293b",
-        color: "#fff",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <Link
-        to="/"
-        style={{
-          color: "#fff",
-          textDecoration: "none",
-          fontSize: "1.25rem",
-          fontWeight: "bold",
-        }}
-      >
-        🏡 RealEstateApp
-      </Link>
-      <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-        <Link to="/" style={{ color: "#fff", textDecoration: "none" }}>
-          Properties
-        </Link>
-        {user ? (
-          <>
-            {isAgentOrAdmin && (
-              <>
-                <Link
-                  to="/add"
-                  style={{
-                    color: "#38bdf8",
-                    fontWeight: "bold",
-                    textDecoration: "none",
-                  }}
-                >
-                  + Add Listing
-                </Link>
-                <Link
-                  to="/agent-dashboard"
-                  style={{
-                    color: "#38bdf8",
-                    fontWeight: "bold",
-                    textDecoration: "none",
-                  }}
-                >
-                  📊 Landlord ERP
-                </Link>
-              </>
-            )}
-            {isAdmin && (
-              <Link
-                to="/admin"
-                style={{
-                  color: "#a855f7",
-                  fontWeight: "bold",
-                  textDecoration: "none",
-                }}
-              >
-                👑 Admin Portal
-              </Link>
-            )}
-
-            {user && user.role === "buyer" && (
-              <Link
-                to="/tenant-dashboard"
-                style={{
-                  color: "#38bdf8",
-                  fontWeight: "bold",
-                  textDecoration: "none",
-                }}
-              >
-                🔑 Tenant Portal
-              </Link>
-            )}
-
-            <span style={{ fontSize: "0.9rem", color: "#94a3b8" }}>
-              Hello, {user.name} ({user.role})
-            </span>
-            <button
-              onClick={logout}
-              style={{
-                background: "#ef4444",
-                color: "#fff",
-                border: "none",
-                padding: "0.4rem 0.8rem",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" style={{ color: "#fff", textDecoration: "none" }}>
-              Login
-            </Link>
-            <Link
-              to="/register"
-              style={{
-                background: "#0284c7",
-                color: "#fff",
-                padding: "0.4rem 0.8rem",
-                borderRadius: "4px",
-                textDecoration: "none",
-              }}
-            >
-              Register
-            </Link>
-          </>
-        )}
+    <header className="app-topbar">
+      <div className="dashboard-inline-actions">
+        <button
+          type="button"
+          className="icon-button"
+          onClick={onToggleSidebar}
+          aria-label="Toggle navigation"
+        >
+          <Menu size={20} strokeWidth={1.5} />
+        </button>
+        <div className="topbar-meta">
+          <span className="breadcrumb">{breadcrumb}</span>
+          <span className="topbar-title">{pageTitle}</span>
+        </div>
       </div>
-    </nav>
+
+      <div className="topbar-actions">
+        <div className="topbar-search">
+          <span aria-hidden="true">
+            <Search size={16} strokeWidth={1.5} />
+          </span>
+          <input type="search" placeholder="Search properties, tenants, reports" aria-label="Search" />
+        </div>
+
+        <NotificationBell />
+
+        <div className="user-chip">
+          <span className="avatar">{getInitials(user?.name)}</span>
+          <div className="user-chip-details">
+            <strong>{user?.name || "Guest User"}</strong>
+            <span className="role-badge">{user?.role || "guest"}</span>
+          </div>
+        </div>
+      </div>
+    </header>
   );
 };
 
