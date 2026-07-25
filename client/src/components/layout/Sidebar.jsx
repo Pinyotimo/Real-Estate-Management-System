@@ -10,8 +10,9 @@ import {
   LogOut,
   Home,
   Users,
+  Bell,
   ChevronLeft,
-  Menu,
+  X,
 } from "lucide-react";
 
 const navGroups = [
@@ -24,6 +25,12 @@ const navGroups = [
       { to: "/agent-dashboard", label: "Agent Dashboard", icon: BarChart3, roles: ["agent", "admin"] },
       { to: "/tenant-dashboard", label: "Tenant Portal", icon: Key, roles: ["tenant"] },
       { to: "/admin", label: "Admin Dashboard", icon: Shield, roles: ["admin"] },
+    ],
+  },
+  {
+    label: "Activity",
+    items: [
+      { to: "/notifications", label: "Notifications", icon: Bell, roles: ["guest", "tenant", "agent", "admin"] },
     ],
   },
   {
@@ -67,36 +74,43 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onMobileClose, onToggleCollapse })
       )}
 
       <aside className="sidebar" aria-label="Primary navigation">
+        {/* Sidebar Header with Logo & Collapse Toggle */}
         <div className="sidebar-header">
-          <Link to="/" className="brand-mark" onClick={onMobileClose}>
+          <Link to="/" className="brand-mark" onClick={onMobileClose} title="Home">
             DS
           </Link>
+          
           {!isCollapsed && (
             <div className="brand-title">
               <strong>Real Estate Manager</strong>
               <span>Davis &amp; Shirtliff</span>
             </div>
           )}
-          {/* Desktop collapse/expand toggle */}
+
+          {/* Desktop Collapse/Expand Toggle Button */}
           <button
             type="button"
             className="sidebar-toggle"
             onClick={onToggleCollapse}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            {isCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
+            {isCollapsed ? <ChevronLeft size={20} /> : <ChevronLeft size={20} />}
           </button>
-          {/* Mobile close button (only shown on mobile) */}
+
+          {/* Mobile Close Button (X) */}
           <button
             type="button"
             className="sidebar-close-mobile"
             onClick={onMobileClose}
             aria-label="Close navigation"
+            title="Close menu"
           >
-            ✕
+            <X size={20} />
           </button>
         </div>
 
+        {/* Navigation Links */}
         <nav className="sidebar-nav">
           {visibleGroups.map((group) => (
             <div key={group.label}>
@@ -113,7 +127,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onMobileClose, onToggleCollapse })
                       onClick={onMobileClose}
                       title={isCollapsed ? item.label : undefined}
                     >
-                      <Icon size={20} className="nav-icon" />
+                      <Icon size={20} className="nav-icon" strokeWidth={1.5} />
                       {!isCollapsed && <span>{item.label}</span>}
                     </NavLink>
                   );
@@ -123,6 +137,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onMobileClose, onToggleCollapse })
           ))}
         </nav>
 
+        {/* Sign Out Button */}
         {user && (
           <div className="sidebar-footer">
             <button
@@ -131,7 +146,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onMobileClose, onToggleCollapse })
               onClick={handleLogout}
               title={isCollapsed ? "Sign Out" : undefined}
             >
-              <LogOut size={20} />
+              <LogOut size={20} strokeWidth={1.5} />
               {!isCollapsed && <span>Sign Out</span>}
             </button>
           </div>

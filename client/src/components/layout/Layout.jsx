@@ -47,14 +47,20 @@ const Layout = () => {
     const isMobile = window.innerWidth < 1024;
 
     if (isMobile) {
+      // On mobile: toggle overlay visibility
       setIsMobileOpen((prev) => !prev);
     } else {
-      setIsCollapsed((prev) => {
-        const next = !prev;
-        localStorage.setItem("sidebarCollapsed", String(next));
-        return next;
-      });
+      // On desktop: collapse/expand sidebar
+      toggleCollapse();
     }
+  };
+
+  const toggleCollapse = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem("sidebarCollapsed", String(next));
+      return next;
+    });
   };
 
   return (
@@ -67,7 +73,7 @@ const Layout = () => {
         isCollapsed={isCollapsed}
         isMobileOpen={isMobileOpen}
         onMobileClose={closeMobile}
-        onToggleCollapse={toggleSidebar}   // <-- passed here
+        onToggleCollapse={toggleCollapse}
       />
 
       <Navbar onToggleSidebar={toggleSidebar} breadcrumb={breadcrumb} />
