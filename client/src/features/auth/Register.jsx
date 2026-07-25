@@ -1,6 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import API from "../../api";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 const Register = () => {
@@ -11,21 +10,21 @@ const Register = () => {
     role: "tenant",
   });
   const [error, setError] = useState("");
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const { register } = useContext(AuthContext);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const { data } = await API.post("/auth/register", formData);
-      login(data.data);
-      navigate("/");
-    } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+    setError("");
+    setLoading(true);
+    const result = await register(formData);
+    if (!result.success) {
+      setError(result.error);
     }
+    setLoading(false);
   };
 
   return (
@@ -60,7 +59,9 @@ const Register = () => {
         {error && <div className="auth-error">{error}</div>}
         <form onSubmit={handleSubmit} className="dashboard-form-stack">
           <div>
-            <label className="dashboard-label required" htmlFor="name">Full Name</label>
+            <label className="dashboard-label required" htmlFor="name">
+              Full Name
+            </label>
             <input
               id="name"
               type="text"
@@ -69,10 +70,13 @@ const Register = () => {
               onChange={handleChange}
               required
               className="dashboard-input"
+              disabled={loading}
             />
           </div>
           <div>
-            <label className="dashboard-label required" htmlFor="email">Email Address</label>
+            <label className="dashboard-label required" htmlFor="email">
+              Email Address
+            </label>
             <input
               id="email"
               type="email"
@@ -81,10 +85,13 @@ const Register = () => {
               onChange={handleChange}
               required
               className="dashboard-input"
+              disabled={loading}
             />
           </div>
           <div>
-            <label className="dashboard-label required" htmlFor="password">Password</label>
+            <label className="dashboard-label required" htmlFor="password">
+              Password
+            </label>
             <input
               id="password"
               type="password"
@@ -93,29 +100,41 @@ const Register = () => {
               onChange={handleChange}
               required
               className="dashboard-input"
+              disabled={loading}
             />
-            <span className="dashboard-subtitle">Use at least 8 characters.</span>
+            <span className="dashboard-subtitle">
+              Use at least 8 characters.
+            </span>
           </div>
           <div>
-            <label className="dashboard-label required" htmlFor="role">Account Role</label>
+            <label className="dashboard-label required" htmlFor="role">
+              Account Role
+            </label>
             <select
               id="role"
               name="role"
               onChange={handleChange}
               value={formData.role}
               className="dashboard-input"
+              disabled={loading}
             >
               <option value="tenant">I am a Tenant</option>
               <option value="agent">I am an Agent</option>
             </select>
           </div>
-          <button type="submit" className="dashboard-btn dashboard-btn--secondary">
-            Register
+          <button
+            type="submit"
+            className="dashboard-btn dashboard-btn--secondary"
+            disabled={loading}
+          >
+            {loading ? "Creating account…" : "Register"}
           </button>
         </form>
         <p className="dashboard-subtitle">
           Already registered?{" "}
-          <Link to="/login" className="dashboard-link">Login here</Link>
+          <Link to="/login" className="dashboard-link">
+            Login here
+          </Link>
         </p>
       </section>
     </div>

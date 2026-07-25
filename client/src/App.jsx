@@ -10,6 +10,7 @@ import TenantDashboard from "./features/dashboard/tenant/TenantDashboard";
 import AdminDashboard from "./features/dashboard/admin/AdminDashboard";
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
+import MyProperties from "./features/property/MyProperties";
 
 // ----- Route Guards -----
 const ProtectedRoute = ({ children }) => {
@@ -71,6 +72,14 @@ function App() {
                 <ProtectedRoute>
                   <TenantDashboard />
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-properties"
+              element={
+                <AgentRoute>
+                  <MyProperties />
+                </AgentRoute>
               }
             />
             <Route

@@ -1,31 +1,41 @@
 import { useContext, useMemo } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-
-// (Icons remain unchanged – omitted for brevity, but keep them as before)
-const Icons = { /* ... same as provided ... */ };
+import {
+  LayoutDashboard,
+  PlusSquare,
+  BarChart3,
+  Key,
+  Shield,
+  LogOut,
+  Home,
+  Users,
+  ChevronLeft,
+  Menu,
+} from "lucide-react";
 
 const navGroups = [
   {
     label: "Workspace",
     items: [
-      { to: "/", label: "Properties", icon: Icons.properties, roles: ["guest", "tenant", "agent", "admin"] },
-      { to: "/add", label: "Add Property", icon: Icons.add, roles: ["agent", "admin"] },
-      { to: "/agent-dashboard", label: "Agent Dashboard", icon: Icons.agent, roles: ["agent", "admin"] },
-      { to: "/tenant-dashboard", label: "Tenant Portal", icon: Icons.tenant, roles: ["tenant"] },
-      { to: "/admin", label: "Admin Dashboard", icon: Icons.admin, roles: ["admin"] },
+      { to: "/", label: "Properties", icon: LayoutDashboard, roles: ["guest", "tenant", "agent", "admin"] },
+      { to: "/add", label: "Add Property", icon: PlusSquare, roles: ["agent", "admin"] },
+      { to: "/my-properties", label: "My Properties", icon: Home, roles: ["agent", "admin"] },
+      { to: "/agent-dashboard", label: "Agent Dashboard", icon: BarChart3, roles: ["agent", "admin"] },
+      { to: "/tenant-dashboard", label: "Tenant Portal", icon: Key, roles: ["tenant"] },
+      { to: "/admin", label: "Admin Dashboard", icon: Shield, roles: ["admin"] },
     ],
   },
   {
     label: "Account",
     items: [
-      { to: "/login", label: "Sign In", icon: Icons.login, roles: ["guest"] },
-      { to: "/register", label: "Create Account", icon: Icons.register, roles: ["guest"] },
+      { to: "/login", label: "Sign In", icon: Users, roles: ["guest"] },
+      { to: "/register", label: "Create Account", icon: Users, roles: ["guest"] },
     ],
   },
 ];
 
-const Sidebar = ({ isCollapsed, isMobileOpen, onMobileClose }) => {
+const Sidebar = ({ isCollapsed, isMobileOpen, onMobileClose, onToggleCollapse }) => {
   const { user, logout } = useContext(AuthContext);
   const role = user?.role || "guest";
 
@@ -47,90 +57,81 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onMobileClose }) => {
 
   return (
     <>
-      {/* Mobile backdrop */}
       {isMobileOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
+          className="sidebar-backdrop"
           aria-label="Close navigation"
           onClick={onMobileClose}
         />
       )}
 
-      <aside
-        className={`
-          fixed inset-y-0 left-0 z-50 bg-surface border-r border-border
-          transition-all duration-300 ease-in-out
-          lg:relative lg:translate-x-0
-          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
-          ${isCollapsed ? 'w-16' : 'w-64'}
-        `}
-        aria-label="Primary navigation"
-      >
-        {/* Brand header */}
-        <div className="h-16 flex items-center justify-center border-b border-border">
-          <Link to="/" className="flex items-center space-x-2" onClick={onMobileClose}>
-            <span className="text-xl font-bold text-brand-blue">DS</span>
-            {!isCollapsed && (
-              <span className="text-sm font-medium text-foreground leading-tight">
-                Real Estate Manager
-                <span className="block text-xs font-normal text-muted-foreground">Davis &amp; Shirtliff</span>
-              </span>
-            )}
+      <aside className="sidebar" aria-label="Primary navigation">
+        <div className="sidebar-header">
+          <Link to="/" className="brand-mark" onClick={onMobileClose}>
+            DS
           </Link>
+          {!isCollapsed && (
+            <div className="brand-title">
+              <strong>Real Estate Manager</strong>
+              <span>Davis &amp; Shirtliff</span>
+            </div>
+          )}
+          {/* Desktop collapse/expand toggle */}
+          <button
+            type="button"
+            className="sidebar-toggle"
+            onClick={onToggleCollapse}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
+          </button>
+          {/* Mobile close button (only shown on mobile) */}
+          <button
+            type="button"
+            className="sidebar-close-mobile"
+            onClick={onMobileClose}
+            aria-label="Close navigation"
+          >
+            ✕
+          </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="py-4 overflow-y-auto h-[calc(100vh-4rem)]">
-          {visibleGroups.map((group, groupIdx) => (
-            <div className="mb-6" key={group.label}>
-              {groupIdx > 0 && <div className="h-px bg-border my-4" />}
-              {!isCollapsed && (
-                <h3 className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {group.label}
-                </h3>
-              )}
-              <ul className="mt-2">
-                {group.items.map((item) => (
-                  <li key={item.to}>
+        <nav className="sidebar-nav">
+          {visibleGroups.map((group) => (
+            <div key={group.label}>
+              {!isCollapsed && <div className="nav-group-label">{group.label}</div>}
+              <div className="nav-group">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
                     <NavLink
+                      key={item.to}
                       to={item.to}
                       end={item.to === "/"}
-                      className={({ isActive }) => `
-                        flex items-center px-4 py-2 text-sm font-medium rounded-md
-                        transition-colors duration-150
-                        ${isCollapsed ? 'justify-center' : ''}
-                        ${isActive
-                          ? 'bg-accent text-brand-blue'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                        }
-                      `}
+                      className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
                       onClick={onMobileClose}
-                      aria-current={({ isActive }) => (isActive ? "page" : undefined)}
+                      title={isCollapsed ? item.label : undefined}
                     >
-                      <span className="text-base" aria-hidden="true">{item.icon}</span>
-                      {!isCollapsed && <span className="ml-3">{item.label}</span>}
+                      <Icon size={20} className="nav-icon" />
+                      {!isCollapsed && <span>{item.label}</span>}
                     </NavLink>
-                  </li>
-                ))}
-              </ul>
+                  );
+                })}
+              </div>
             </div>
           ))}
         </nav>
 
-        {/* Footer: Logout */}
         {user && (
-          <div className={`px-4 py-4 border-t border-border ${isCollapsed ? 'flex justify-center' : ''}`}>
+          <div className="sidebar-footer">
             <button
               type="button"
-              className={`
-                inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium
-                text-muted-foreground hover:text-foreground hover:bg-muted transition-colors
-                ${isCollapsed ? 'w-auto' : 'w-full'}
-              `}
+              className="dashboard-btn dashboard-btn--outline full-width"
               onClick={handleLogout}
+              title={isCollapsed ? "Sign Out" : undefined}
             >
-              {Icons.logout}
+              <LogOut size={20} />
               {!isCollapsed && <span>Sign Out</span>}
             </button>
           </div>

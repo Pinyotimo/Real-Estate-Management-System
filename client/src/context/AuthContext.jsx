@@ -3,13 +3,19 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
-// Create context with default values to avoid undefined
 const AuthContext = createContext({
   user: null,
   login: () => {},
+  register: () => {},
   logout: () => {},
   loading: true,
 });
+
+const roleHome = {
+  admin: "/admin",
+  agent: "/agent-dashboard",
+  tenant: "/tenant-dashboard",
+};
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -35,14 +41,28 @@ const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const { data } = await api.post('/auth/login', { email, password });
-      const { token, user } = data.data;
+      const { token, ...user } = data.data;
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
-      navigate('/');
+      navigate(roleHome[user.role] || '/');
       return { success: true };
     } catch (err) {
       return { success: false, error: err.response?.data?.message || 'Login failed' };
+    }
+  };
+
+  const register = async (formData) => {
+    try {
+      const { data } = await api.post('/auth/register', formData);
+      const { token, ...user } = data.data;
+      localStorage.setItem('token', token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(user);
+      navigate(roleHome[user.role] || '/');
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.message || 'Registration failed' };
     }
   };
 
@@ -53,12 +73,11 @@ const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
-  const value = { user, login, logout, loading };
+  const value = { user, login, register, logout, loading };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Custom hook for easy usage
 const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

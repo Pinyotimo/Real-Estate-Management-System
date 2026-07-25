@@ -1,6 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import API from "../../api";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
@@ -10,23 +9,15 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const handleLoginSubmit = async (loginEmail, loginPassword) => {
-    try {
-      setError("");
-      setLoading(true);
-      const { data } = await API.post("/auth/login", {
-        email: loginEmail,
-        password: loginPassword,
-      });
-      login(data.data);
-      navigate("/");
-    } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password. Please try again.");
-    } finally {
-      setLoading(false);
+    setError("");
+    setLoading(true);
+    const result = await login(loginEmail, loginPassword);
+    if (!result.success) {
+      setError(result.error);
     }
+    setLoading(false);
   };
 
   const handleSubmit = (e) => {
