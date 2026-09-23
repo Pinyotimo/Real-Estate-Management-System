@@ -15,7 +15,7 @@ const generateToken = (id, tokenVersion = 0) => {
 // @route   POST /api/auth/register
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phone } = req.body; // <-- Added phone here
 
     if (!email || !password) {
       await createAuditLog(req, {
@@ -43,7 +43,8 @@ const registerUser = async (req, res) => {
         .json({ success: false, message: "User already exists" });
     }
 
-    const user = await User.create({ name, email: normalizedEmail, password, role });
+    // <-- Added phone to the creation payload
+    const user = await User.create({ name, email: normalizedEmail, password, role, phone });
 
     // Attach created user for audit logger metadata
     req.user = user;

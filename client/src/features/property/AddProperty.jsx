@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Plus, Loader2, Save, Building2 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,7 +90,6 @@ const AddProperty = () => {
     }
 
     try {
-      // Axios automatically configures Content-Type boundaries when passing FormData
       await API.post("/properties", data);
       navigate("/", { state: { success: "Property listed successfully!" } });
     } catch (err) {
@@ -117,84 +116,80 @@ const AddProperty = () => {
   const combinedError = error || media.error;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-8 pb-12">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
-        <div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-              aria-label="Go back"
-              disabled={uploading}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h2 className="text-xl font-bold text-foreground">
-              Post a New Property
-            </h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-border/60">
+        <div className="flex items-start gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="h-10 w-10 shrink-0 text-muted-foreground hover:text-foreground rounded-full shadow-sm mt-1"
+            aria-label="Go back"
+            disabled={uploading}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-primary" />
+              <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                Post a New Property
+              </h2>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-lg">
+              Create a professional listing with photos, videos, and full details to attract the right tenants or buyers.
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground mt-1 sm:ml-10">
-            Create a professional listing with photos, videos, and full details.
-          </p>
         </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => navigate(-1)}
-          disabled={uploading}
-          className="self-start sm:self-auto"
-        >
-          Cancel
-        </Button>
       </div>
 
       {/* Main Form Card Container */}
-      <Card className="p-5 sm:p-8 border-border bg-card shadow-xs transition-colors rounded-2xl">
+      <Card className="border-border/50 bg-card shadow-sm transition-colors rounded-2xl overflow-hidden relative">
         <FormFeedback
           error={combinedError}
           onDismissError={handleDismissError}
         />
 
-        <form onSubmit={handleSubmit} className="space-y-8 mt-4">
-          <PropertyBasicsFields formData={formData} onChange={handleChange} />
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          {/* Form Content Padding */}
+          <div className="p-6 sm:p-10 space-y-12">
+            <PropertyBasicsFields formData={formData} onChange={handleChange} />
 
-          <ListingDetailsFields
-            formData={formData}
-            onChange={handleChange}
-            onCategoryChange={handleCategoryChange}
-            houseTypeOptions={houseTypeOptions}
-          />
+            <ListingDetailsFields
+              formData={formData}
+              onChange={handleChange}
+              onCategoryChange={handleCategoryChange}
+              houseTypeOptions={houseTypeOptions}
+            />
 
-          <SpecsFields formData={formData} onChange={handleChange} />
+            <SpecsFields formData={formData} onChange={handleChange} />
 
-          <LocationFields location={location} />
+            <LocationFields location={location} />
 
-          <AmenitiesFields formData={formData} onChange={handleChange} />
+            <AmenitiesFields formData={formData} onChange={handleChange} />
 
-          <MapLinkFields formData={formData} onChange={handleChange} />
+            <MapLinkFields formData={formData} onChange={handleChange} />
 
-          <MediaUploadFields
-            fileInputRef={media.fileInputRef}
-            mediaFiles={media.mediaFiles}
-            filePreviews={media.filePreviews}
-            onMediaChange={media.handleMediaChange}
-            onRemoveFile={media.removeFile}
-          />
+            <MediaUploadFields
+              fileInputRef={media.fileInputRef}
+              mediaFiles={media.mediaFiles}
+              filePreviews={media.filePreviews}
+              onMediaChange={media.handleMediaChange}
+              onRemoveFile={media.removeFile}
+            />
+          </div>
 
-          {/* Form Actions */}
-          <div className="pt-6 border-t border-border flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+          {/* Sticky Form Actions */}
+          <div className="sticky bottom-0 z-10 p-6 sm:px-10 border-t border-border/50 bg-background/95 backdrop-blur-sm flex flex-col-reverse sm:flex-row items-center justify-end gap-3 shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.05)]">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               onClick={() => navigate(-1)}
               disabled={uploading}
-              className="w-full sm:w-auto gap-2"
+              className="w-full sm:w-auto gap-2 font-medium"
             >
               <Save className="w-4 h-4 text-muted-foreground" />
               <span>Cancel / Save Draft</span>
@@ -203,7 +198,7 @@ const AddProperty = () => {
             <Button
               type="submit"
               disabled={uploading}
-              className="w-full sm:w-auto gap-2"
+              className="w-full sm:w-auto gap-2 font-semibold shadow-md hover:shadow-lg transition-all"
             >
               {uploading ? (
                 <>

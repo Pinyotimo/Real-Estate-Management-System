@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   User,
   Mail,
+  Phone,
   Lock,
   Eye,
   EyeOff,
@@ -20,6 +21,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     role: "tenant",
   });
@@ -46,10 +48,15 @@ const Register = () => {
     try {
       const result = await register(formData);
       if (result && !result.success) {
-        setError(result.error || "Failed to create account. Please check your details.");
+        setError(
+          result.error ||
+          "Failed to create account. Please check your details."
+        );
       }
     } catch (err) {
-      setError(err.message || "An unexpected error occurred during registration.");
+      setError(
+        err.message || "An unexpected error occurred during registration."
+      );
     } finally {
       setLoading(false);
     }
@@ -73,7 +80,8 @@ const Register = () => {
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Register as a tenant or agent and enter the same secure operational system used across listings, occupancy, and payment workflows.
+            Register as a tenant or agent and enter the same secure operational
+            system used across listings, occupancy, and payment workflows.
           </p>
         </div>
 
@@ -82,7 +90,9 @@ const Register = () => {
           <div className="auth-metric p-4 rounded-xl bg-slate-900/60 border border-slate-800">
             <div className="flex items-center gap-2 mb-1">
               <UserCheck className="w-4 h-4 text-emerald-400" />
-              <strong className="text-sm font-bold text-slate-100">Agent</strong>
+              <strong className="text-sm font-bold text-slate-100">
+                Agent
+              </strong>
             </div>
             <p className="text-xs text-slate-400">List and manage units</p>
           </div>
@@ -90,7 +100,9 @@ const Register = () => {
           <div className="auth-metric p-4 rounded-xl bg-slate-900/60 border border-slate-800">
             <div className="flex items-center gap-2 mb-1">
               <Key className="w-4 h-4 text-indigo-400" />
-              <strong className="text-sm font-bold text-slate-100">Tenant</strong>
+              <strong className="text-sm font-bold text-slate-100">
+                Tenant
+              </strong>
             </div>
             <p className="text-xs text-slate-400">Pay and report issues</p>
           </div>
@@ -98,7 +110,9 @@ const Register = () => {
           <div className="auth-metric p-4 rounded-xl bg-slate-900/60 border border-slate-800">
             <div className="flex items-center gap-2 mb-1">
               <Building className="w-4 h-4 text-purple-400" />
-              <strong className="text-sm font-bold text-slate-100">Admin</strong>
+              <strong className="text-sm font-bold text-slate-100">
+                Admin
+              </strong>
             </div>
             <p className="text-xs text-slate-400">Govern the system</p>
           </div>
@@ -124,10 +138,16 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="dashboard-form-stack space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="dashboard-form-stack space-y-4"
+        >
           {/* Full Name */}
           <div>
-            <label className="dashboard-label required text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block" htmlFor="name">
+            <label
+              className="dashboard-label required text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block"
+              htmlFor="name"
+            >
               Full Name
             </label>
             <div className="relative">
@@ -148,7 +168,10 @@ const Register = () => {
 
           {/* Email Address */}
           <div>
-            <label className="dashboard-label required text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block" htmlFor="email">
+            <label
+              className="dashboard-label required text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block"
+              htmlFor="email"
+            >
               Email Address
             </label>
             <div className="relative">
@@ -167,9 +190,36 @@ const Register = () => {
             </div>
           </div>
 
+          {/* Phone Number */}
+          <div>
+            <label
+              className="dashboard-label required text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block"
+              htmlFor="phone"
+            >
+              Phone Number
+            </label>
+            <div className="relative">
+              <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                id="phone"
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                placeholder="+254700000000"
+                onChange={handleChange}
+                required
+                disabled={loading}
+                className="dashboard-input w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 transition-colors"
+              />
+            </div>
+          </div>
+
           {/* Password */}
           <div>
-            <label className="dashboard-label required text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block" htmlFor="password">
+            <label
+              className="dashboard-label required text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block"
+              htmlFor="password"
+            >
               Password
             </label>
             <div className="relative">
@@ -192,7 +242,11 @@ const Register = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
             <span className="dashboard-subtitle text-[11px] text-slate-400 mt-1 block">
@@ -217,10 +271,14 @@ const Register = () => {
                     : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
               >
-                <Key className={`w-4 h-4 ${formData.role === "tenant" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
+                <Key
+                  className={`w-4 h-4 ${formData.role === "tenant" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`}
+                />
                 <div>
                   <div className="text-xs font-bold">Tenant</div>
-                  <div className="text-[10px] text-slate-400">Rent & pay bills</div>
+                  <div className="text-[10px] text-slate-400">
+                    Rent & pay bills
+                  </div>
                 </div>
               </button>
 
@@ -235,10 +293,14 @@ const Register = () => {
                     : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
               >
-                <UserCheck className={`w-4 h-4 ${formData.role === "agent" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
+                <UserCheck
+                  className={`w-4 h-4 ${formData.role === "agent" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`}
+                />
                 <div>
                   <div className="text-xs font-bold">Agent</div>
-                  <div className="text-[10px] text-slate-400">Manage listings</div>
+                  <div className="text-[10px] text-slate-400">
+                    Manage listings
+                  </div>
                 </div>
               </button>
             </div>
