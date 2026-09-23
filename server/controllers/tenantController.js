@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const TenantAssignment = require("../models/tenantAssignment");
+const TenantAssignment = require('../models/TenantAssignment');
 const Payment = require("../models/Payment");
 const Complaint = require("../models/Complaint");
 
