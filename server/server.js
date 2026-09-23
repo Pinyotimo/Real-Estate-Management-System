@@ -7,7 +7,7 @@ const connectDB = require("./config/db");
 // 1. Explicitly import models to register schemas with Mongoose on boot
 require("./models/User");
 require("./models/Property");
-require("./models/tenantAssignment"); // Ensure casing matches your actual filename
+require("./models/TenantAssignment"); // Ensure casing matches your actual filename
 require("./models/Payment");
 require("./models/Complaint");
 
