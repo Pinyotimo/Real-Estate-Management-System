@@ -1,4 +1,4 @@
-const TenantAssignment = require("../models/Assignment");
+const Assignment = require('../models/assignment');
 const Property = require("../models/Property");
 const User = require("../models/User");
 const createAuditLog = require("../utils/auditLogger");
