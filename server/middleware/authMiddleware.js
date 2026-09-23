@@ -1,48 +1,57 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 const protect = async (req, res, next) => {
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     try {
-      token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
+      // Get token from header
+      token = req.headers.authorization.split(" ")[1];
+
+      // Use same fallback secret as authController.js
+      const secret = process.env.JWT_SECRET || "fallback_jwt_secret_key_12345";
+
+      // Verify token
+      const decoded = jwt.verify(token, secret);
+
+      // Get user from the token ID
+      req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user) {
-        return res.status(401).json({ success: false, message: 'User no longer exists' });
+        console.log("❌ Protect Middleware: User from token no longer exists");
+        return res
+          .status(401)
+          .json({ success: false, message: "User not found" });
       }
-
-      // Reject tokens issued before a force-logout / suspend bumped tokenVersion
-      if (decoded.tokenVersion !== req.user.tokenVersion) {
-        return res.status(401).json({ success: false, message: 'Session expired, please log in again' });
-      }
-
-      if (req.user.suspended) {
-        return res.status(403).json({ success: false, message: 'This account has been suspended' });
-      }
-
-      // Track activity without blocking the request on the write
-      User.findByIdAndUpdate(req.user._id, { lastActiveAt: new Date() }).catch(() => {});
 
       return next();
     } catch (error) {
-      return res.status(401).json({ success: false, message: 'Not authorized, token invalid' });
+      console.error("❌ Token Verification Failed:", error.message);
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authorized, token failed" });
     }
   }
 
   if (!token) {
-    return res.status(401).json({ success: false, message: 'Not authorized, no token provided' });
+    console.log("❌ Protect Middleware: No token provided in headers");
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authorized, no token" });
   }
 };
 
+// Role authorization middleware
 const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `Role '${req.user?.role}' is not authorized to perform this action`,
+        message: `User role '${req.user.role}' is not authorized to access this route`,
       });
     }
     next();

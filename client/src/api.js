@@ -1,17 +1,32 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: "http://localhost:5000/api",
 });
 
-// Interceptor attaches Bearer token if user is logged in
-API.interceptors.request.use((config) => {
-  const userInfo = localStorage.getItem('userInfo');
-  if (userInfo) {
-    const user = JSON.parse(userInfo);
-    config.headers.Authorization = `Bearer ${user.token}`;
+// Inject current JWT token into headers for every request
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Handle expired or unauthorized tokens without breaking form error states
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear token only if authentication failed, then let the component handle the error
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 export default API;

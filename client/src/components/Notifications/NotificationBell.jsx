@@ -1,27 +1,62 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Bell, Check } from "lucide-react";
+import {
+  Bell,
+  Check,
+  MessageSquare,
+  DollarSign,
+  Wrench,
+  AlertTriangle,
+  Home,
+  Key,
+} from "lucide-react";
 import { useNotifications } from "./NotificationsContext";
 
-const indicatorClass = (type) => {
-  switch (type) {
-    case "complaint":
-      return "notif-dot--danger";
-    case "payment":
-      return "notif-dot--success";
-    case "arrears":
-      return "notif-dot--warning";
-    default:
-      return "notif-dot--info";
-  }
+const typeConfig = {
+  inquiry: { icon: MessageSquare, accent: "info" },
+  payment: { icon: DollarSign, accent: "success" },
+  rent: { icon: DollarSign, accent: "success" },
+  complaint: { icon: Wrench, accent: "danger" },
+  maintenance: { icon: Wrench, accent: "danger" },
+  arrears: { icon: AlertTriangle, accent: "warning" },
+  property: { icon: Home, accent: "info" },
+  assignment: { icon: Key, accent: "info" },
+  system: { icon: Bell, accent: "info" },
+};
+
+const getTypeConfig = (type) => typeConfig[type] || { icon: Bell, accent: "info" };
+
+// Utility to calculate relative time for MongoDB ISO createdAt timestamps
+const formatTimeAgo = (createdAt, fallbackTime) => {
+  if (fallbackTime) return fallbackTime;
+  if (!createdAt) return "Just now";
+
+  const date = new Date(createdAt);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+
+  if (diffInSeconds < 60) return "Just now";
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+
+  return date.toLocaleDateString();
 };
 
 const NotificationBell = () => {
   const navigate = useNavigate();
-  const { notifications, unreadCount, markAsRead, markAllAsRead } =
-    useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef(null);
+
+  // 1. Guard against non-array payloads (e.g. initial fetch loading states)
+  const safeNotifications = Array.isArray(notifications) ? notifications : [];
+
+  // 2. Safe fallback calculation for unread count
+  const calculatedUnreadCount =
+    typeof unreadCount === "number"
+      ? unreadCount
+      : safeNotifications.filter((n) => !(n.isRead ?? n.read)).length;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -33,6 +68,7 @@ const NotificationBell = () => {
     const handleEscape = (e) => {
       if (e.key === "Escape") setIsOpen(false);
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("keydown", handleEscape);
     return () => {
@@ -42,9 +78,15 @@ const NotificationBell = () => {
   }, [isOpen]);
 
   const handleNotificationClick = (notification) => {
-    markAsRead(notification.id);
+    const notifId = notification._id || notification.id;
+    const isRead = notification.isRead ?? notification.read;
+    const targetUrl = notification.actionUrl || notification.link || "/notifications";
+
+    if (!isRead && markAsRead) {
+      markAsRead(notifId);
+    }
     setIsOpen(false);
-    navigate(notification.actionUrl || "/notifications");
+    navigate(targetUrl);
   };
 
   return (
@@ -53,18 +95,20 @@ const NotificationBell = () => {
         type="button"
         className="icon-button optional-mobile"
         onClick={() => setIsOpen((v) => !v)}
-        aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
+        aria-label={`Notifications${
+          calculatedUnreadCount > 0 ? ` (${calculatedUnreadCount} unread)` : ""
+        }`}
         aria-expanded={isOpen}
         title="View notifications"
         style={{ position: "relative", color: "var(--brand-blue)" }}
       >
         <Bell size={15} strokeWidth={1.5} />
-        {unreadCount > 0 && (
+        {calculatedUnreadCount > 0 && (
           <span
             className="notification-badge"
-            aria-label={`${unreadCount} unread notifications`}
+            aria-label={`${calculatedUnreadCount} unread notifications`}
           >
-            {unreadCount > 9 ? "9+" : unreadCount}
+            {calculatedUnreadCount > 9 ? "9+" : calculatedUnreadCount}
           </span>
         )}
       </button>
@@ -72,8 +116,11 @@ const NotificationBell = () => {
       {isOpen && (
         <div className="notif-popover">
           <div className="notif-popover-header">
-            <span>Notifications</span>
-            {unreadCount > 0 && (
+            <span>
+              Notifications
+              {calculatedUnreadCount > 0 ? ` · ${calculatedUnreadCount} new` : ""}
+            </span>
+            {calculatedUnreadCount > 0 && (
               <button
                 type="button"
                 className="notif-mark-all"
@@ -85,28 +132,39 @@ const NotificationBell = () => {
           </div>
 
           <div className="notif-popover-list">
-            {notifications.length === 0 ? (
+            {safeNotifications.length === 0 ? (
               <div className="notif-empty">
-                <Bell size={18} strokeWidth={1.5} />
+                <Bell size={20} strokeWidth={1.5} />
                 <span>You're all caught up!</span>
               </div>
             ) : (
-              notifications.slice(0, 6).map((n) => (
-                <div
-                  key={n.id}
-                  className={`notif-item${n.read ? " notif-item--read" : ""}`}
-                  onClick={() => handleNotificationClick(n)}
-                >
-                  <div className="notif-item-top">
-                    <span className="notif-item-title">{n.title}</span>
-                    {!n.read && (
-                      <span className={`notif-dot ${indicatorClass(n.type)}`} />
-                    )}
+              safeNotifications.slice(0, 6).map((n) => {
+                // Normalize field keys between Mock Data and Backend MongoDB Schema
+                const id = n._id || n.id;
+                const isRead = n.isRead ?? n.read;
+                const timeAgo = formatTimeAgo(n.createdAt, n.timeAgo);
+                const { icon: TypeIcon, accent } = getTypeConfig(n.type);
+
+                return (
+                  <div
+                    key={id}
+                    className={`notif-item${isRead ? " notif-item--read" : ""}`}
+                    onClick={() => handleNotificationClick(n)}
+                  >
+                    <span
+                      className={`notif-item-icon notif-item-icon--${accent}`}
+                    >
+                      <TypeIcon size={15} strokeWidth={1.75} />
+                      {!isRead && <span className="notif-item-icon-dot" />}
+                    </span>
+                    <div className="notif-item-body">
+                      <span className="notif-item-title">{n.title}</span>
+                      <p className="notif-item-message">{n.message}</p>
+                      <span className="notif-item-time">{timeAgo}</span>
+                    </div>
                   </div>
-                  <p className="notif-item-message">{n.message}</p>
-                  <span className="notif-item-time">{n.timeAgo}</span>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 

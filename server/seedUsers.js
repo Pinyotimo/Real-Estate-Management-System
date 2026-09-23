@@ -1,36 +1,66 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const dns = require('dns');
+const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 
-// 🌐 Force Node.js to use Google's DNS servers (fixes DNS querySrv errors)
 dns.setServers(['8.8.8.8', '8.8.4.4']);
-
 dotenv.config();
 
 const seedUsers = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    const connStr = process.env.MONGO_URI || process.env.MONGODB_URI;
+    if (!connStr) throw new Error('MONGO_URI is missing from .env!');
 
-    // Clear existing demo users if present
-    await User.deleteMany({
-      email: { $in: ['admin@test.com', 'agent@test.com', 'tenant@demo.com'] },
-    });
+    console.log(`🔌 Connecting to MongoDB: ${connStr.split('@').pop() || connStr}`);
+    await mongoose.connect(connStr);
 
-    // Create 3 fresh accounts
-    await User.create([
-      { name: 'System Admin', email: 'admin@test.com', password: 'password123', role: 'admin' },
-      { name: 'Sarah Agent', email: 'agent@test.com', password: 'password123', role: 'agent' },
-      { name: 'John Tenant', email: 'tenant@test.com', password: 'password123', role: 'tenant' },
+    // Clean up old demo accounts
+    const demoEmails = [
+      'admin@test.com', 'agent@test.com', 'tenant@test.com',
+      'admin@demo.com', 'agent@demo.com', 'tenant@demo.com'
+    ];
+    await User.deleteMany({ email: { $in: demoEmails } });
+
+    // Hash password ONCE
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    // Bypass Mongoose middleware using native collection driver
+    await User.collection.insertMany([
+      {
+        name: 'System Admin',
+        email: 'admin@test.com',
+        phone: '+254700000000',
+        password: hashedPassword,
+        role: 'admin',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Sarah Agent',
+        email: 'agent@test.com',
+        phone: '+254787654321',
+        password: hashedPassword,
+        role: 'agent',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'John Tenant',
+        email: 'tenant@test.com',
+        phone: '+254712345678',
+        password: hashedPassword,
+        role: 'tenant',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
 
-    console.log('✅ Demo users created successfully!');
-    console.log('🔑 Admin: admin@test.com | password123');
-    console.log('🔑 Agent: agent@test.com | password123');
-    console.log('🔑 Tenant: tenant@test.com | password123');
+    console.log('✅ Demo users seeded successfully!');
+    await mongoose.disconnect();
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error seeding users:', error);
+    console.error('❌ Error seeding users:', error.message || error);
     process.exit(1);
   }
 };

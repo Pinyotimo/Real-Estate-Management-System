@@ -1,85 +1,133 @@
-const Property = require('../models/Property');
-const Complaint = require('../models/Complaint');
-const Payment = require('../models/Payment');
+const crypto = require("crypto");
+const TenantAssignment = require("../models/tenantAssignment");
+const Payment = require("../models/Payment");
+const Complaint = require("../models/Complaint");
 
-// @desc    Get assigned house/warehouse/business unit, complaints, and receipts
+// @desc    Get all assigned properties and status for logged-in tenant
 // @route   GET /api/tenant/overview
-// @access  Private (Tenant/
+// @access  Private (Tenant)
 const getTenantOverview = async (req, res) => {
   try {
     const tenantId = req.user._id;
 
-    // Search for property assigned specifically to this tenant's User ID
-    const property = await Property.findOne({ tenantUser: tenantId });
-    const complaints = await Complaint.find({ tenant: tenantId }).sort({ createdAt: -1 });
-    const payments = await Payment.find({ tenant: tenantId }).sort({ createdAt: -1 });
+    const assignments = await TenantAssignment.find({
+      tenant: tenantId,
+      status: {
+        $in: ["active", "pending_documents", "pending_invite", "notice_given"],
+      },
+    })
+      .populate("property")
+      .lean();
 
-    res.status(200).json({
+    const properties = assignments
+      .filter((asm) => asm.property)
+      .map((asm) => ({
+        ...asm.property,
+        agreedRent: asm.agreedRent,
+        rentArrears: asm.rentArrears || 0,
+        rentPaid: asm.rentPaid || 0,
+        assignmentId: asm._id,
+        leaseStatus: asm.status,
+      }));
+
+    const complaints = await Complaint.find({ tenant: tenantId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const payments = await Payment.find({ tenant: tenantId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.status(200).json({
       success: true,
       data: {
-        property: property || null,
+        properties,
+        assignments,
         complaints,
         payments,
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @desc    Process Rent or Utility Payment
+// @desc    Process rent or utility payment
 // @route   POST /api/tenant/pay
-// @access  Private (Tenant
+// @access  Private (Tenant)
 const makePayment = async (req, res) => {
   try {
-    const { propertyId, amount, paymentType, paymentMethod } = req.body;
+    const { assignmentId, amount, paymentType, paymentMethod } = req.body;
+    const tenantId = req.user._id;
 
-    const property = await Property.findById(propertyId);
-    if (!property) {
-      return res.status(404).json({ success: false, message: 'Property not found' });
+    const assignment = await TenantAssignment.findById(assignmentId);
+    if (!assignment) {
+      return res.status(404).json({
+        success: false,
+        message: "Active lease assignment not found.",
+      });
     }
 
-    const transactionId = 'TXN-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+    const numericAmount = Number(amount);
+    if (!numericAmount || numericAmount <= 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Enter a valid amount." });
+    }
+
+    const transactionId = `TXN-${Date.now().toString().slice(-6)}-${crypto.randomBytes(2).toString("hex").toUpperCase()}`;
 
     const payment = await Payment.create({
-      tenant: req.user._id,
-      property: propertyId,
-      amount: Number(amount),
-      paymentType,
-      paymentMethod,
+      tenant: tenantId,
+      property: assignment.property,
+      assignment: assignment._id,
+      amount: numericAmount,
+      paymentType: paymentType || "rent",
+      paymentMethod: paymentMethod || "mpesa",
       transactionId,
     });
 
-    // Deduct rent payment from arrears and credit rentPaid
-    if (paymentType === 'rent') {
-      property.rentPaid = (property.rentPaid || 0) + Number(amount);
-      property.rentArrears = Math.max(0, (property.rentArrears || 0) - Number(amount));
-      await property.save();
+    if (paymentType === "rent" || !paymentType) {
+      assignment.rentPaid = (assignment.rentPaid || 0) + numericAmount;
+      assignment.rentArrears = Math.max(
+        0,
+        (assignment.rentArrears || 0) - numericAmount,
+      );
+      await assignment.save();
     }
 
-    res.status(201).json({ success: true, message: 'Payment recorded successfully', data: payment });
+    return res
+      .status(201)
+      .json({ success: true, message: "Payment recorded", data: payment });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+// @desc    Submit maintenance complaint
+// @route   POST /api/tenant/complaints
+// @access  Private (Tenant)
 const submitComplaint = async (req, res) => {
   try {
     const { propertyId, title, category, description } = req.body;
+
     const complaint = await Complaint.create({
       tenant: req.user._id,
       property: propertyId,
       title,
-      category,
+      category: category || "Maintenance",
       description,
     });
 
-    res.status(201).json({ success: true, message: 'Complaint submitted', data: complaint });
+    return res
+      .status(201)
+      .json({ success: true, message: "Complaint submitted", data: complaint });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+// ⚠️ Explicitly export all three functions for CommonJS
 module.exports = {
   getTenantOverview,
   makePayment,

@@ -3,59 +3,24 @@ const mongoose = require("mongoose");
 const propertySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    description: { type: String, required: true },
-    price: { type: Number, required: true }, // Monthly Rent
-    estate: { type: String, required: true },
-    county: { type: String, required: true },
-    houseType: {
-      type: String,
-      required: true,
-      enum: [
-        "Residential House",
-        "Warehouse",
-        "Business Space / Office",
-        "Apartment",
-        "Shop / Commercial",
-      ],
-    },
+    description: { type: String },
+    price: { type: Number, required: true },
+    estate: { type: String },
+    county: { type: String },
+    listingType: { type: String, default: "For Rent" },
+    propertyCategory: { type: String, default: "Residential" },
+    houseType: { type: String },
+    amenities: [{ type: String }],
     bedrooms: { type: Number, default: 0 },
     bathrooms: { type: Number, default: 0 },
     squareMeters: { type: Number, default: 0 },
     condition: { type: String, default: "Excellent" },
-    mapLocation: { type: String, default: "" },
-    images: [{ type: String }],
-    video: { type: String, default: "" },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, //  Agent
-
-    // Occupancy & Tenant Linkage
-    status: { type: String, enum: ["vacant", "occupied"], default: "vacant" },
-    tenantUser: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
-    tenantName: { type: String, default: "" },
-    tenantPhone: { type: String, default: "" },
-
-    // Financial Balances
-    rentPaid: { type: Number, default: 0 },
-    rentArrears: { type: Number, default: 0 },
-
-    // Utility & Operations Tracking
-    electricityMeter: { type: String, default: "N/A" },
-    wifiStatus: {
-      type: String,
-      enum: ["active", "disconnected", "pending"],
-      default: "active",
-    },
-    repairStatus: {
-      type: String,
-      enum: ["none", "pending", "in_progress", "completed"],
-      default: "none",
-    },
-    repairNotes: { type: String, default: "" },
+    mapLocation: { type: String },
+    images: [{ type: String }], // MUST BE DEFINED HERE
+    video: { type: String },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Property", propertySchema);
