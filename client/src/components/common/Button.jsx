@@ -19,13 +19,13 @@ const Button = ({
   ...props
 }) => {
   const variants = {
-    primary: 'bg-brand-blue text-white hover:bg-[#1A6AA8] focus:ring-brand-blue/50 border-transparent',
-    secondary: 'bg-secondary text-white hover:bg-[#333333] focus:ring-secondary/50 border-transparent',
-    outline: 'border border-brand-blue bg-transparent text-brand-blue hover:bg-brand-very-light-blue focus:ring-brand-blue/50',
-    ghost: 'bg-transparent text-text-primary hover:bg-surface-soft focus:ring-brand-blue/50 border-transparent',
-    danger: 'bg-danger text-white hover:bg-[#333333] focus:ring-danger/50 border-transparent',
-    success: 'bg-success text-white hover:bg-[#1A6AA8] focus:ring-success/50 border-transparent',
-    warning: 'bg-warning text-white hover:bg-[#333333] focus:ring-warning/50 border-transparent',
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary/50 border-transparent',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-secondary/50 border-transparent',
+    outline: 'border border-border bg-transparent text-foreground hover:bg-muted focus:ring-ring/50',
+    ghost: 'bg-transparent text-text-primary hover:bg-surface-soft focus:ring-ring/50 border-transparent',
+    danger: 'bg-danger text-danger-foreground hover:bg-danger/90 focus:ring-danger/50 border-transparent',
+    success: 'bg-success text-success-foreground hover:bg-success/90 focus:ring-success/50 border-transparent',
+    warning: 'bg-warning text-warning-foreground hover:bg-warning/90 focus:ring-warning/50 border-transparent',
   };
 
   const sizeClasses = {
@@ -41,9 +41,9 @@ const Button = ({
       type={type}
       className={`
         inline-flex items-center justify-center gap-2
-        font-medium rounded-md
+        font-semibold rounded-xl
         transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-offset-2
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background
         disabled:opacity-50 disabled:cursor-not-allowed
         ${variants[variant] || variants.primary}
         ${sizeClasses[size] || sizeClasses.md}

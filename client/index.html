@@ -4,7 +4,33 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>client</title>
+    <meta
+      name="description"
+      content="Davis & Shirtliff Real Estate Manager — listings, occupancy, rent roll, and tenant operations in one workspace."
+    />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#12161f" />
+    <title>Davis &amp; Shirtliff — Real Estate Manager</title>
+    <script>
+      // Apply the saved theme before first paint so the page never flashes
+      // the wrong colour scheme. Mirrors the logic in ThemeProvider.
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.classList.toggle("dark", theme === "dark");
+          document.documentElement.style.colorScheme = theme;
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          /* storage blocked — fall back to the light scheme */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

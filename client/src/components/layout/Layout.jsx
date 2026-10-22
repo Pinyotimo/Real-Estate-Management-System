@@ -49,7 +49,7 @@ const Layout = () => {
 
   // Close on Escape key
   useEffect(() => {
-    if (!isMobileOpen) return;
+    if (!isMobileOpen) return undefined;
     const handleEscape = (e) => {
       if (e.key === "Escape") setIsMobileOpen(false);
     };
@@ -91,11 +91,11 @@ const Layout = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col transition-colors duration-200">
+    <div className="relative flex min-h-screen flex-col bg-background font-sans text-foreground antialiased transition-colors duration-200 selection:bg-brand-blue/25">
       {/* Skip to Content */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-indigo-600 focus:text-white focus:font-semibold focus:rounded-xl focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-brand-blue focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white focus:shadow-float focus:outline-none"
       >
         Skip to main content
       </a>
@@ -108,9 +108,9 @@ const Layout = () => {
         onToggleCollapse={toggleCollapse}
       />
 
-      {/* Main Content Area - Responsive padding perfectly matches sidebar width */}
+      {/* Main Content Area - Responsive padding matches sidebar width */}
       <div
-        className={`flex-1 flex flex-col min-w-0 min-h-screen transition-[padding] duration-300 ease-in-out ${
+        className={`flex min-h-screen min-w-0 flex-1 flex-col transition-[padding] duration-300 ease-in-out ${
           isCollapsed ? "lg:pl-20" : "lg:pl-64"
         }`}
       >
@@ -120,7 +120,7 @@ const Layout = () => {
         {/* Page Main Content */}
         <main
           id="main-content"
-          className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8"
+          className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8"
           role="main"
         >
           <Outlet />
@@ -128,16 +128,15 @@ const Layout = () => {
 
         {/* Footer */}
         <footer
-          className="mt-auto border-t border-slate-200 dark:border-slate-800/80 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md py-4 transition-colors"
+          className="mt-auto border-t border-border bg-card/60 py-4 backdrop-blur-md transition-colors"
           role="contentinfo"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
-            <span className="font-medium text-slate-700 dark:text-slate-300">
-              © {new Date().getFullYear()} Davis &amp; Shirtliff Real Estate Manager.
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
+            <span className="font-medium text-text-secondary">
+              © {new Date().getFullYear()} Davis &amp; Shirtliff Real Estate
+              Manager.
             </span>
-            <span className="text-slate-500 dark:text-slate-500">
-              All rights reserved.
-            </span>
+            <span>All rights reserved.</span>
           </div>
         </footer>
       </div>

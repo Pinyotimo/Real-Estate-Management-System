@@ -1,9 +1,10 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Search, User, Settings, LogOut, ChevronDown } from "lucide-react";
+import { Search, User, Settings, LogOut, ChevronDown, Menu } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
 import NotificationBell from "../Notifications/NotificationBell";
+import ThemeToggle from "../ThemeToggle";
 
 const routeTitles = {
   "/": "Property Portfolio",
@@ -17,6 +18,7 @@ const routeTitles = {
   "/settings": "Settings",
   "/login": "Sign In",
   "/register": "Create Account",
+  "/landing": "Welcome",
 };
 
 const getInitials = (name = "Guest") =>
@@ -28,7 +30,7 @@ const getInitials = (name = "Guest") =>
     .join("")
     .toUpperCase();
 
-const Navbar = ({ breadcrumb = "Workspace" }) => {
+const Navbar = ({ breadcrumb = "Workspace", onToggleSidebar }) => {
   const { user, logout } = useContext(AuthContext);
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -40,7 +42,8 @@ const Navbar = ({ breadcrumb = "Workspace" }) => {
     (pathname.startsWith("/properties/") ? "Property Details" : "Workspace");
 
   useEffect(() => {
-    if (!isDropdownOpen) return;
+    if (!isDropdownOpen) return undefined;
+
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setIsDropdownOpen(false);
@@ -70,42 +73,55 @@ const Navbar = ({ breadcrumb = "Workspace" }) => {
   const getRoleBadgeColor = (role) => {
     switch (role?.toLowerCase()) {
       case "admin":
-        return "bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/80";
+        return "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/80";
       case "agent":
       case "manager":
-        return "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/80";
+        return "bg-brand-very-light-blue text-brand-blue border-brand-blue/25";
       case "tenant":
-        return "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80";
+        return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80";
       default:
-        return "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700";
+        return "bg-surface-soft text-text-secondary border-border";
     }
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-200 px-4 sm:px-6 py-3">
-      <div className="w-full flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-30 w-full border-b border-border bg-background/85 px-4 py-3 backdrop-blur-md transition-colors duration-200 sm:px-6">
+      <div className="flex w-full items-center justify-between gap-4">
+        {/* Mobile sidebar trigger */}
+        <button
+          type="button"
+          onClick={onToggleSidebar}
+          aria-label="Toggle navigation sidebar"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-text-secondary transition-colors hover:bg-surface-soft hover:text-text-primary lg:hidden"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
+
         {/* Left Section: Breadcrumb & Title */}
-        <div className="flex flex-col min-w-0">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">
+        <div className="flex min-w-0 flex-col">
+          <span className="truncate text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             {breadcrumb}
           </span>
-          <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
+          <h1 className="truncate text-base font-bold tracking-tight text-foreground sm:text-lg">
             {pageTitle}
           </h1>
         </div>
 
         {/* Right Section: Actions & User Dropdown */}
-        <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {/* Search Bar */}
-          <div className="hidden md:flex items-center relative w-48 lg:w-64">
-            <Search className="w-4 h-4 absolute left-3 text-slate-400 dark:text-slate-500 pointer-events-none" />
+          <div className="relative hidden w-48 items-center md:flex lg:w-64">
+            <Search className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
               placeholder="Search properties, tenants..."
               aria-label="Search properties and tenants"
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800/60 border border-transparent dark:border-slate-700/60 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-all"
+              className="w-full rounded-xl border border-transparent bg-surface-soft py-1.5 pl-9 pr-3 text-xs text-foreground transition-all placeholder:text-muted-foreground focus:border-brand-blue focus:bg-card focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
             />
           </div>
+
+          {/* Theme toggle */}
+          <ThemeToggle />
 
           {/* Notifications */}
           <NotificationBell />
@@ -117,31 +133,31 @@ const Navbar = ({ breadcrumb = "Workspace" }) => {
               onClick={() => setIsDropdownOpen((v) => !v)}
               aria-expanded={isDropdownOpen}
               aria-haspopup="true"
-              className="flex items-center gap-2.5 p-1 sm:p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 border border-transparent hover:border-slate-200 dark:hover:border-slate-700/60 transition-all cursor-pointer outline-none"
+              className="flex items-center gap-2.5 rounded-xl border border-transparent p-1 transition-all hover:border-border hover:bg-surface-soft sm:p-1.5"
             >
               {user?.profilePicture ? (
                 <img
                   src={user.profilePicture}
                   alt={user?.name || "User Avatar"}
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-indigo-500/20"
+                  className="h-8 w-8 rounded-full object-cover ring-2 ring-brand-blue/25 sm:h-9 sm:w-9"
                 />
               ) : (
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-brand-blue to-brand-blue-dark text-xs font-bold text-white shadow-soft sm:h-9 sm:w-9">
                   {getInitials(user?.name)}
                 </div>
               )}
 
-              <div className="hidden sm:flex flex-col text-left max-w-[120px] lg:max-w-[160px]">
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
+              <div className="hidden min-w-0 max-w-[120px] flex-col text-left sm:flex lg:max-w-[160px]">
+                <span className="truncate text-xs font-bold text-foreground">
                   {user?.name || "Guest User"}
                 </span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+                <span className="truncate text-[10px] text-muted-foreground">
                   {user?.username ? `@${user.username}` : user?.email || "guest"}
                 </span>
               </div>
 
               <ChevronDown
-                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 hidden sm:block ${
+                className={`hidden h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 sm:block ${
                   isDropdownOpen ? "rotate-180" : ""
                 }`}
               />
@@ -149,24 +165,24 @@ const Navbar = ({ breadcrumb = "Workspace" }) => {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-60 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
-                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+              <div className="absolute right-0 z-50 mt-2 w-60 animate-in fade-in slide-in-from-top-2 rounded-2xl border border-border bg-popover py-2 shadow-float">
+                <div className="border-b border-border px-4 py-2">
+                  <p className="truncate text-xs font-bold text-foreground">
                     {user?.name || "Guest User"}
                   </p>
                   {user?.username && (
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">
+                    <p className="truncate text-[11px] text-muted-foreground">
                       @{user.username}
                     </p>
                   )}
                   {user?.email && (
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                    <p className="mt-0.5 truncate text-[11px] text-text-secondary">
                       {user.email}
                     </p>
                   )}
                   <div className="mt-2">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getRoleBadgeColor(
+                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getRoleBadgeColor(
                         user?.role
                       )}`}
                     >
@@ -175,35 +191,35 @@ const Navbar = ({ breadcrumb = "Workspace" }) => {
                   </div>
                 </div>
 
-                <div className="p-1 space-y-0.5">
+                <div className="space-y-0.5 p-1">
                   <button
                     type="button"
                     onClick={() => goTo("/profile")}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl transition-colors cursor-pointer"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-text-secondary transition-colors hover:bg-surface-soft hover:text-foreground"
                   >
-                    <User className="w-4 h-4 text-slate-400" />
+                    <User className="h-4 w-4 text-muted-foreground" />
                     <span>My Profile</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => goTo("/settings")}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl transition-colors cursor-pointer"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-text-secondary transition-colors hover:bg-surface-soft hover:text-foreground"
                   >
-                    <Settings className="w-4 h-4 text-slate-400" />
+                    <Settings className="h-4 w-4 text-muted-foreground" />
                     <span>Settings</span>
                   </button>
                 </div>
 
-                <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+                <div className="my-1 border-t border-border" />
 
                 <div className="p-1">
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition-colors cursor-pointer"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-500/10 dark:text-rose-400"
                   >
-                    <LogOut className="w-4 h-4 text-rose-500" />
+                    <LogOut className="h-4 w-4 text-rose-500" />
                     <span>Sign Out</span>
                   </button>
                 </div>
@@ -218,6 +234,7 @@ const Navbar = ({ breadcrumb = "Workspace" }) => {
 
 Navbar.propTypes = {
   breadcrumb: PropTypes.string,
+  onToggleSidebar: PropTypes.func,
 };
 
 export default Navbar;

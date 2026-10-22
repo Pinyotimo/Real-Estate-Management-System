@@ -24,8 +24,8 @@ const Card = ({
   // Safe fallback if an invalid padding key is provided
   const resolvedPadding = paddingClasses[padding] || paddingClasses.normal;
 
-  const hoverClass = hover 
-    ? 'hover:shadow-md transition-shadow duration-200' 
+  const hoverClass = hover
+    ? 'hover:shadow-raised transition-shadow duration-200'
     : '';
 
   const isInteractive = Boolean(onClick);
@@ -33,7 +33,7 @@ const Card = ({
   return (
     <div
       className={`
-        bg-surface rounded-lg border border-border shadow-sm
+        bg-surface rounded-2xl border border-border shadow-soft
         ${resolvedPadding}
         ${hoverClass}
         ${isInteractive ? 'cursor-pointer hover:border-border-hover' : ''}
@@ -55,7 +55,7 @@ const Card = ({
       {...props}
     >
       {(title || subtitle || headerActions) && (
-        <div 
+        <div
           className={`flex items-center justify-between gap-4 mb-4 pb-4 border-b border-border-light ${
             padding === 'none' ? 'px-4 pt-4 sm:px-6 sm:pt-6' : ''
           }`}

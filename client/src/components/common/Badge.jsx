@@ -14,22 +14,22 @@ const Badge = ({
   ...props 
 }) => {
   const variants = {
-    default: 'bg-gray-100 text-gray-700 border-gray-200',
-    available: 'bg-green-50 text-green-700 border-green-200',
-    occupied: 'bg-blue-50 text-blue-700 border-blue-200',
-    pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-    paid: 'bg-green-50 text-green-700 border-green-200',
-    overdue: 'bg-red-50 text-red-700 border-red-200',
-    approved: 'bg-green-50 text-green-700 border-green-200',
-    rejected: 'bg-red-50 text-red-700 border-red-200',
-    warning: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-    success: 'bg-green-50 text-green-700 border-green-200',
-    danger: 'bg-red-50 text-red-700 border-red-200',
-    info: 'bg-blue-50 text-blue-700 border-blue-200',
-    admin: 'bg-red-50 text-red-700 border-red-200',
-    agent: 'bg-blue-50 text-blue-700 border-blue-200',
-    tenant: 'bg-green-50 text-green-700 border-green-200',
-    guest: 'bg-gray-100 text-gray-700 border-gray-200',
+    default: 'bg-surface-soft text-text-secondary border-border',
+    available: 'bg-success/10 text-success border-success/25',
+    occupied: 'bg-brand-very-light-blue text-brand-blue border-brand-blue/25',
+    pending: 'bg-warning/10 text-warning border-warning/25',
+    paid: 'bg-success/10 text-success border-success/25',
+    overdue: 'bg-danger/10 text-danger border-danger/25',
+    approved: 'bg-success/10 text-success border-success/25',
+    rejected: 'bg-danger/10 text-danger border-danger/25',
+    warning: 'bg-warning/10 text-warning border-warning/25',
+    success: 'bg-success/10 text-success border-success/25',
+    danger: 'bg-danger/10 text-danger border-danger/25',
+    info: 'bg-brand-very-light-blue text-brand-blue border-brand-blue/25',
+    admin: 'bg-danger/10 text-danger border-danger/25',
+    agent: 'bg-brand-very-light-blue text-brand-blue border-brand-blue/25',
+    tenant: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    guest: 'bg-surface-soft text-text-secondary border-border',
   };
 
   const iconMap = {

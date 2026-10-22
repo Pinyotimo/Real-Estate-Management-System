@@ -35,7 +35,7 @@ const navGroups = [
         label: "Favourites",
         icon: Heart,
         roles: ["guest", "tenant", "agent", "admin"],
-        hasBadge: true, // Flag to render favourites count badge
+        hasBadge: true,
       },
       {
         to: "/add",
@@ -132,7 +132,7 @@ const Sidebar = ({
         <button
           type="button"
           tabIndex={-1}
-          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs lg:hidden transition-opacity cursor-pointer border-none outline-none"
+          className="fixed inset-0 z-40 cursor-pointer border-none bg-black/60 backdrop-blur-sm outline-none transition-opacity lg:hidden"
           aria-label="Close navigation"
           onClick={onMobileClose}
         />
@@ -141,34 +141,30 @@ const Sidebar = ({
       {/* Main Sidebar Drawer */}
       <aside
         aria-label="Primary navigation"
-        className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800/80 transition-all duration-300 ease-in-out ${
-          // Mobile Drawer Slide Transforms
+        className={`fixed bottom-0 left-0 top-0 z-40 flex flex-col border-r border-border bg-card transition-all duration-300 ease-in-out ${
           isMobileOpen
-            ? "translate-x-0 w-64 shadow-2xl"
+            ? "translate-x-0 w-64 shadow-float"
             : "-translate-x-full lg:translate-x-0"
-        } ${
-          // Desktop Width Collapsed vs Expanded
-          isCollapsed ? "lg:w-20" : "lg:w-64"
-        }`}
+        } ${isCollapsed ? "lg:w-20" : "lg:w-64"}`}
       >
         {/* Header Section: Brand & Controls */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-800/80 shrink-0">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
           <Link
-            to="/"
-            className="flex items-center gap-3 group focus:outline-none"
+            to="/landing"
+            className="group flex min-w-0 items-center gap-3 focus:outline-none"
             onClick={onMobileClose}
-            title="Home"
+            title="Marketing site"
           >
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-indigo-500/20 group-hover:bg-indigo-700 dark:group-hover:bg-indigo-400 transition-colors shrink-0">
-              <Building2 className="w-5 h-5" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white shadow-soft transition-colors group-hover:bg-brand-blue-dark">
+              <Building2 className="h-5 w-5" />
             </div>
 
             {!isCollapsed && (
-              <div className="flex flex-col min-w-0">
-                <span className="font-extrabold text-slate-900 dark:text-white text-base tracking-tight leading-tight truncate">
+              <div className="flex min-w-0 flex-col">
+                <span className="truncate text-base font-extrabold leading-tight tracking-tight text-foreground">
                   D&amp;S Realtor
                 </span>
-                <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Real Estate
                 </span>
               </div>
@@ -179,14 +175,14 @@ const Sidebar = ({
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="hidden lg:flex items-center justify-center p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="hidden h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-surface-soft hover:text-text-primary lg:flex"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (
-              <Menu className="w-5 h-5" />
+              <Menu className="h-5 w-5" />
             ) : (
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="h-5 w-5" />
             )}
           </button>
 
@@ -194,20 +190,20 @@ const Sidebar = ({
           <button
             type="button"
             onClick={onMobileClose}
-            className="flex lg:hidden items-center justify-center p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            aria-label="Close navigation"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-surface-soft hover:text-text-primary lg:hidden"
+            aria-label="Close menu"
             title="Close menu"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Navigation Group Items */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar">
+        <nav className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 py-4">
           {visibleGroups.map((group) => (
             <div key={group.label} className="space-y-1">
               {!isCollapsed && (
-                <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <div className="mb-2 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {group.label}
                 </div>
               )}
@@ -225,30 +221,30 @@ const Sidebar = ({
                       onClick={onMobileClose}
                       title={isCollapsed ? item.label : undefined}
                       className={({ isActive }) =>
-                        `relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                        `relative flex items-center gap-3 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all duration-150 ${
                           isActive
-                            ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40 shadow-2xs"
-                            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 border border-transparent"
+                            ? "border-brand-blue/20 bg-brand-very-light-blue text-brand-blue shadow-xs"
+                            : "border-transparent text-text-secondary hover:bg-surface-soft hover:text-foreground"
                         } ${isCollapsed ? "lg:justify-center lg:px-0" : ""}`
                       }
                     >
                       <div className="relative flex items-center justify-center">
-                        <Icon className="w-5 h-5 shrink-0" strokeWidth={1.75} />
+                        <Icon className="h-5 w-5 shrink-0" strokeWidth={1.75} />
                         {/* Collapsed view badge indicator */}
                         {isCollapsed && isFavouritesItem && favouritesCount > 0 && (
-                          <span className="absolute -top-1 -right-1.5 flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                          <span className="absolute -right-1.5 -top-1 flex h-2.5 w-2.5">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75" />
+                            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-rose-500" />
                           </span>
                         )}
                       </div>
 
                       {!isCollapsed && (
-                        <div className="flex items-center justify-between flex-1 min-w-0">
+                        <div className="flex min-w-0 flex-1 items-center justify-between">
                           <span className="truncate">{item.label}</span>
                           {/* Expanded view numeric count badge */}
                           {isFavouritesItem && favouritesCount > 0 && (
-                            <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-bold leading-none text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-900/40 rounded-full">
+                            <span className="ml-auto inline-flex items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold leading-none text-rose-600 dark:border-rose-900/40 dark:bg-rose-950/80 dark:text-rose-400">
                               {favouritesCount}
                             </span>
                           )}
@@ -264,16 +260,16 @@ const Sidebar = ({
 
         {/* Sidebar Footer: User Logout */}
         {user && (
-          <div className="p-3 border-t border-slate-100 dark:border-slate-800/80 shrink-0">
+          <div className="shrink-0 border-t border-border p-3">
             <button
               type="button"
               onClick={handleLogout}
               title={isCollapsed ? "Sign Out" : undefined}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/50 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors cursor-pointer ${
+              className={`flex w-full items-center gap-3 rounded-xl border border-rose-200/70 bg-rose-50/50 px-3 py-2.5 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-100 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-400 dark:hover:bg-rose-900/50 ${
                 isCollapsed ? "lg:justify-center lg:px-0" : ""
               }`}
             >
-              <LogOut className="w-5 h-5 shrink-0" strokeWidth={1.75} />
+              <LogOut className="h-5 w-5 shrink-0" strokeWidth={1.75} />
               {!isCollapsed && <span>Sign Out</span>}
             </button>
           </div>

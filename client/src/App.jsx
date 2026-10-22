@@ -17,6 +17,7 @@ import Register from "./features/auth/Register";
 
 import NotificationsPage from "./components/Notifications/NotificationsPage";
 import ProfilePage from "./features/profile/ProfilePage";
+import LandingPage from "./pages/LandingPage";
 import SettingsPage from "./features/settings/SettingsPage";
 import EditProperty from "./features/property/EditProperty";
 import AddProperty from "./features/property/AddProperty";
@@ -145,7 +146,8 @@ function App() {
                   }
                 />
 
-                {/* Auth routes without Layout (full-screen) */}
+                {/* Public routes without Layout (full-screen) */}
+                <Route path="/landing" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
               </Routes>

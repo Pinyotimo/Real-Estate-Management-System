@@ -22,16 +22,15 @@ const PageHeader = ({
     : breadcrumb;
 
   const titleSizes = {
-    sm: 'var(--font-size-xl)',
-    md: 'var(--font-size-2xl)',
-    lg: 'var(--font-size-3xl)',
-    xl: 'var(--font-size-4xl)',
+    sm: 'text-lg',
+    md: 'text-xl',
+    lg: 'text-2xl',
+    xl: 'text-3xl',
   };
 
   return (
-    <div 
-      className={containerClassName}
-      style={{ marginBottom: 'var(--spacing-6)' }}
+    <div
+      className={`mb-6 ${containerClassName}`.trim()}
       {...props}
     >
       {breadcrumbItems.length > 0 && (
@@ -104,12 +103,9 @@ const PageHeader = ({
                 <Icon size={size === 'xl' ? 28 : size === 'lg' ? 24 : size === 'sm' ? 16 : 20} />
               </div>
             )}
-            <h1 
-              className="font-bold truncate"
-              style={{ 
-                fontSize: titleSizes[size] || titleSizes.lg,
-                color: 'var(--text-primary)',
-              }}
+            <h1
+              className={`truncate font-bold tracking-tight ${titleSizes[size] || titleSizes.lg}`}
+              style={{ color: 'var(--text-primary)' }}
             >
               {title}
             </h1>
