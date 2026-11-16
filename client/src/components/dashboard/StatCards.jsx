@@ -1,24 +1,43 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { 
-  TrendingUp, 
-  AlertTriangle, 
-  Receipt, 
-  ShieldAlert 
-} from 'lucide-react';
-import Card from '../common/Card';
+import { useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
+import { motion } from "framer-motion";
+import { AlertTriangle, Receipt, ShieldAlert, TrendingUp } from "lucide-react";
+import Card from "../common/Card";
 
-// Currency Formatter Helper
-const formatCurrency = (val, currency = 'KES') => {
+const formatCurrency = (val, currency = "KES") => {
   const numericVal = Number(val);
-  if (isNaN(numericVal)) return `${currency} 0`;
-  return `${currency} ${numericVal.toLocaleString('en-KE', {
+  if (Number.isNaN(numericVal)) return `${currency} 0`;
+  return `${currency} ${numericVal.toLocaleString("en-KE", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   })}`;
 };
 
-const StatCards = ({ financials = {}, loading = false, className = '' }) => {
+const AnimatedMoney = ({ value }) => {
+  const [display, setDisplay] = useState(0);
+  const frame = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(value);
+      return undefined;
+    }
+    const start = performance.now();
+    const duration = 900;
+    const tick = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(value * eased);
+      if (progress < 1) frame.current = requestAnimationFrame(tick);
+    };
+    frame.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame.current);
+  }, [value]);
+
+  return <span className="tabular-nums">{formatCurrency(display)}</span>;
+};
+
+const StatCards = ({ financials = {}, loading = false, className = "" }) => {
   const {
     totalIncome = 0,
     totalArrears = 0,
@@ -28,60 +47,59 @@ const StatCards = ({ financials = {}, loading = false, className = '' }) => {
 
   const cards = [
     {
-      id: 'income',
-      title: 'Total Income',
-      subtitle: 'Collected Rent',
+      id: "income",
+      title: "Total Income",
+      subtitle: "Collected rent",
       value: totalIncome,
       icon: TrendingUp,
-      borderClass: 'border-l-4 border-emerald-500 dark:border-emerald-400',
-      iconBg: 'bg-emerald-50 dark:bg-emerald-950/60',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
+      iconClass: "bg-success/10 text-success",
     },
     {
-      id: 'arrears',
-      title: 'Tenant Arrears',
-      subtitle: 'Pending Rent',
+      id: "arrears",
+      title: "Tenant Arrears",
+      subtitle: "Pending rent",
       value: totalArrears,
       icon: AlertTriangle,
-      borderClass: 'border-l-4 border-amber-500 dark:border-amber-400',
-      iconBg: 'bg-amber-50 dark:bg-amber-950/60',
-      iconColor: 'text-amber-600 dark:text-amber-400',
+      iconClass: "bg-warning/10 text-warning",
     },
     {
-      id: 'expenses',
-      title: 'Total Expenses',
-      subtitle: 'Paid Expenses',
+      id: "expenses",
+      title: "Total Expenses",
+      subtitle: "Paid expenses",
       value: totalExpenses,
       icon: Receipt,
-      borderClass: 'border-l-4 border-blue-500 dark:border-blue-400',
-      iconBg: 'bg-blue-50 dark:bg-blue-950/60',
-      iconColor: 'text-blue-600 dark:text-blue-400',
+      iconClass: "bg-brand-very-light-blue text-brand-blue",
     },
     {
-      id: 'liabilities',
-      title: 'Liabilities',
-      subtitle: 'Outstanding Unpaid',
+      id: "liabilities",
+      title: "Liabilities",
+      subtitle: "Outstanding unpaid",
       value: totalLiabilities,
       icon: ShieldAlert,
-      borderClass: 'border-l-4 border-rose-500 dark:border-rose-400',
-      iconBg: 'bg-rose-50 dark:bg-rose-950/60',
-      iconColor: 'text-rose-600 dark:text-rose-400',
+      iconClass: "bg-danger/10 text-danger",
     },
   ];
 
-  /* Loading Skeleton View */
   if (loading) {
     return (
-      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 ${className}`}>
+      <div
+        className={`grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 ${className}`}
+        aria-busy="true"
+      >
         {[...Array(4)].map((_, i) => (
-          <Card key={i} padding="normal" hover={false} className="animate-pulse bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
-            <div className="flex items-start justify-between space-x-3">
-              <div className="space-y-2.5 flex-1">
-                <div className="h-3 bg-slate-200 dark:bg-slate-700/80 rounded-md w-1/2" />
-                <div className="h-6 bg-slate-200 dark:bg-slate-700/80 rounded-md w-3/4" />
-                <div className="h-2.5 bg-slate-100 dark:bg-slate-800/80 rounded-md w-1/3" />
+          <Card
+            key={i}
+            padding="normal"
+            hover={false}
+            className="animate-pulse border border-border bg-card"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 space-y-2.5">
+                <div className="h-3 w-1/2 rounded-md bg-surface-muted" />
+                <div className="h-6 w-3/4 rounded-md bg-surface-muted" />
+                <div className="h-2.5 w-1/3 rounded-md bg-surface-muted" />
               </div>
-              <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700/80 rounded-xl shrink-0" />
+              <div className="h-10 w-10 shrink-0 rounded-xl bg-surface-muted" />
             </div>
           </Card>
         ))}
@@ -89,39 +107,44 @@ const StatCards = ({ financials = {}, loading = false, className = '' }) => {
     );
   }
 
-  /* Stat Cards View */
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 ${className}`}>
-      {cards.map((card) => {
+    <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 ${className}`}>
+      {cards.map((card, index) => {
         const Icon = card.icon;
-
         return (
-          <Card 
+          <motion.div
             key={card.id}
-            padding="normal"
-            hover
-            className={`${card.borderClass} transition-all duration-200 hover:shadow-md bg-white dark:bg-slate-900 border-y border-r border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
-                  {card.title}
-                </p>
-                <p className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-1 truncate tracking-tight">
-                  {formatCurrency(card.value)}
-                </p>
-                {card.subtitle && (
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium truncate">
-                    {card.subtitle}
+            <Card
+              padding="normal"
+              hover
+              className="card-shine tilt-card group border border-border bg-card shadow-soft"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                    {card.title}
                   </p>
-                )}
+                  <p className="mt-1 truncate text-xl font-extrabold tracking-tight text-text-primary sm:text-2xl">
+                    <AnimatedMoney value={card.value} />
+                  </p>
+                  {card.subtitle && (
+                    <p className="mt-0.5 truncate text-xs font-medium text-text-muted">
+                      {card.subtitle}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className={`shrink-0 rounded-xl p-2.5 shadow-xs transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110 ${card.iconClass}`}
+                >
+                  <Icon className="h-5 w-5" strokeWidth={1.75} />
+                </div>
               </div>
-
-              <div className={`p-2.5 rounded-xl ${card.iconBg} ${card.iconColor} shrink-0 border border-transparent dark:border-slate-800 shadow-xs`}>
-                <Icon className="w-5 h-5" strokeWidth={1.75} />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         );
       })}
     </div>

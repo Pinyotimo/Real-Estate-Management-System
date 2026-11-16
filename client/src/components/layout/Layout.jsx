@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
@@ -12,7 +13,23 @@ const Layout = () => {
       return false;
     }
   });
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const update = () => {
+      const root = document.documentElement;
+      const max = root.scrollHeight - root.clientHeight;
+      const progress = max > 0 ? root.scrollTop / max : 0;
+      if (scrollRef.current) {
+        scrollRef.current.style.transform = `scaleX(${progress})`;
+      }
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
 
   const breadcrumb = useMemo(() => {
     if (pathname === "/") return "Workspace / Property Portfolio";
@@ -92,6 +109,8 @@ const Layout = () => {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background font-sans text-foreground antialiased transition-colors duration-200 selection:bg-brand-blue/25">
+      <div aria-hidden="true" className="app-backdrop" />
+
       {/* Skip to Content */}
       <a
         href="#main-content"
@@ -108,38 +127,52 @@ const Layout = () => {
         onToggleCollapse={toggleCollapse}
       />
 
-      {/* Main Content Area - Responsive padding matches sidebar width */}
+      {/* Scroll progress */}
       <div
-        className={`flex min-h-screen min-w-0 flex-1 flex-col transition-[padding] duration-300 ease-in-out ${
-          isCollapsed ? "lg:pl-20" : "lg:pl-64"
-        }`}
-      >
-        {/* Navbar */}
-        <Navbar onToggleSidebar={toggleSidebar} breadcrumb={breadcrumb} />
+        ref={scrollRef}
+        className="scroll-progress"
+        style={{ transform: "scaleX(0)" }}
+      />
 
-        {/* Page Main Content */}
-        <main
-          id="main-content"
-          className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8"
-          role="main"
+      {/* Main Content Area - Responsive padding matches sidebar width */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={pathname}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          className={`relative z-10 flex min-h-screen min-w-0 flex-1 flex-col transition-[padding] duration-300 ease-in-out ${
+            isCollapsed ? "lg:pl-20" : "lg:pl-64"
+          }`}
         >
-          <Outlet />
-        </main>
+          {/* Navbar */}
+          <Navbar onToggleSidebar={toggleSidebar} breadcrumb={breadcrumb} />
 
-        {/* Footer */}
-        <footer
-          className="mt-auto border-t border-border bg-card/60 py-4 backdrop-blur-md transition-colors"
-          role="contentinfo"
-        >
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
-            <span className="font-medium text-text-secondary">
-              © {new Date().getFullYear()} Davis &amp; Shirtliff Real Estate
-              Manager.
-            </span>
-            <span>All rights reserved.</span>
-          </div>
-        </footer>
-      </div>
+          {/* Page Main Content */}
+          <main
+            id="main-content"
+            className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8"
+            role="main"
+          >
+            <Outlet />
+          </main>
+
+          {/* Footer */}
+          <footer
+            className="mt-auto border-t border-border bg-card/60 py-4 backdrop-blur-md transition-colors"
+            role="contentinfo"
+          >
+            <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
+              <span className="font-medium text-text-secondary">
+                © {new Date().getFullYear()} Davis &amp; Shirtliff Real Estate
+                Manager.
+              </span>
+              <span>All rights reserved.</span>
+            </div>
+          </footer>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

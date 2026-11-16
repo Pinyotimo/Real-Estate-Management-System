@@ -1,20 +1,21 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { motion } from "framer-motion";
 import {
-  ShieldCheck,
-  Clock,
-  Users,
-  Smartphone,
   AlertCircle,
-  X,
+  ArrowLeft,
+  Building2,
   Eye,
   EyeOff,
   Loader2,
-  ArrowLeft,
-  Building2,
+  Lock,
+  Mail,
+  ShieldCheck,
 } from "lucide-react";
 
+import { AuthContext } from "../../context/AuthContext";
+import AuthScene from "@/components/auth/AuthScene";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   Card,
   CardContent,
@@ -26,8 +27,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -40,7 +39,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Redirect target after successful login
   const from = location.state?.from?.pathname || "/";
 
   const handleLoginSubmit = async (loginEmail, loginPassword) => {
@@ -73,11 +71,10 @@ const Login = () => {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
-      {/* Top bar: return to site + appearance control */}
       <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 sm:p-6">
         <Link
           to="/landing"
-          className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/80 px-3 py-2 text-xs font-semibold text-text-secondary backdrop-blur transition-colors hover:bg-surface-soft hover:text-foreground"
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/80 px-3 py-2 text-xs font-semibold text-text-secondary backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-surface-soft hover:text-foreground hover:shadow-soft"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to site
@@ -85,57 +82,23 @@ const Login = () => {
         <ThemeToggle />
       </div>
 
-      <div className="grid w-full flex-1 items-center lg:grid-cols-2">
-        {/* Hero Section */}
-        <div className="auth-hero hidden h-full lg:flex">
-          <div className="relative z-10 space-y-6 max-w-lg">
-            <Badge
-              variant="secondary"
-              className="w-fit gap-1.5 border border-white/15 bg-white/10 px-3 py-1 text-white"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>Secure property operations</span>
-            </Badge>
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Manage listings, tenants, payments, and service requests.
-            </h1>
-            <p className="text-sm leading-relaxed text-white/75">
-              A focused workspace for administrators, agents, landlords, and
-              residents with Davis &amp; Shirtliff inspired visual standards.
-            </p>
-          </div>
-
-          <div
-            className="relative z-10 grid grid-cols-3 gap-4 border-t border-white/10 pt-8"
-            aria-label="Platform highlights"
-          >
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <Clock className="mb-2 h-5 w-5 text-white" />
-              <div className="text-lg font-bold text-white">24/7</div>
-              <p className="text-xs text-white/60">Portal access</p>
-            </div>
-
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <Users className="mb-2 h-5 w-5 text-white" />
-              <div className="text-lg font-bold text-white">3</div>
-              <p className="text-xs text-white/60">Role workspaces</p>
-            </div>
-
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <Smartphone className="mb-2 h-5 w-5 text-white" />
-              <div className="text-lg font-bold text-white">100%</div>
-              <p className="text-xs text-white/60">Responsive UI</p>
-            </div>
-          </div>
+      <div className="grid w-full flex-1 items-stretch lg:grid-cols-[1.05fr_1fr]">
+        <div className="hidden lg:block">
+          <AuthScene
+            badge="Secure property operations"
+            title="Manage listings, tenants, payments, and service requests."
+            subtitle="A focused workspace for administrators, agents, landlords, and residents — with role-based access and a full audit trail."
+          />
         </div>
 
-        {/* Form Section */}
         <div className="flex items-center justify-center p-4 pt-24 sm:p-8 lg:p-12 lg:pt-12">
-          <div className="w-full max-w-md">
-            <Link
-              to="/landing"
-              className="mb-8 inline-flex items-center gap-2.5 lg:hidden"
-            >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-md"
+          >
+            <Link to="/landing" className="mb-8 inline-flex items-center gap-2.5 lg:hidden">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-blue text-white">
                 <Building2 className="h-5 w-5" />
               </span>
@@ -144,7 +107,7 @@ const Login = () => {
               </span>
             </Link>
 
-            <Card className="rounded-2xl border-border bg-card shadow-float">
+            <Card className="card-shine rounded-2xl border-border bg-card shadow-float">
               <CardHeader className="space-y-1.5">
                 <CardTitle className="text-2xl font-bold tracking-tight">
                   Sign In
@@ -154,10 +117,13 @@ const Login = () => {
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-6">
-                {/* Error Banner */}
+              <CardContent className="space-y-5">
                 {error && (
-                  <div className="flex items-center gap-2 rounded-xl border border-destructive/25 bg-destructive/10 p-3 text-xs text-destructive">
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="flex items-center gap-2 overflow-hidden rounded-xl border border-destructive/25 bg-destructive/10 p-3 text-xs text-destructive"
+                  >
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     <span className="flex-1">{error}</span>
                     <Button
@@ -168,31 +134,34 @@ const Login = () => {
                       className="h-5 w-5 p-0 text-destructive hover:bg-transparent hover:text-destructive"
                       aria-label="Dismiss error"
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <span aria-hidden="true">×</span>
                     </Button>
-                  </div>
+                  </motion.div>
                 )}
 
-                {/* Login Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="name@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      autoComplete="email"
-                      disabled={loading}
-                      className="h-10"
-                    />
+                    <div className="relative">
+                      <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        autoComplete="email"
+                        disabled={loading}
+                        className="h-11 rounded-xl pl-9"
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
+                      <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
@@ -202,14 +171,14 @@ const Login = () => {
                         required
                         autoComplete="current-password"
                         disabled={loading}
-                        className="h-10 pr-10"
+                        className="h-11 rounded-xl pl-9 pr-10"
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
                         onClick={() => setShowPassword((v) => !v)}
-                        className="absolute right-0 top-0 h-full w-10 text-muted-foreground hover:text-foreground"
+                        className="absolute right-0 top-0 h-full w-10 rounded-xl text-muted-foreground hover:text-foreground"
                         aria-label={showPassword ? "Hide password" : "Show password"}
                         tabIndex={-1}
                       >
@@ -240,11 +209,11 @@ const Login = () => {
                     </Link>
                   </div>
 
-                  <div className="space-y-2 pt-2">
+                  <div className="space-y-2 pt-1">
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="h-10 w-full gap-2"
+                      className="h-11 w-full gap-2 rounded-xl"
                     >
                       {loading ? (
                         <>
@@ -258,8 +227,8 @@ const Login = () => {
                   </div>
                 </form>
 
-                <p className="pt-2 text-center text-xs text-muted-foreground">
-                  Don't have an account?{" "}
+                <p className="pt-1 text-center text-xs text-muted-foreground">
+                  Don&apos;t have an account?{" "}
                   <Link
                     to="/register"
                     className="font-medium text-primary hover:underline"
@@ -269,7 +238,12 @@ const Login = () => {
                 </p>
               </CardContent>
             </Card>
-          </div>
+
+            <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Protected by hashed credentials and role-based access.
+            </p>
+          </motion.div>
         </div>
       </div>
     </div>

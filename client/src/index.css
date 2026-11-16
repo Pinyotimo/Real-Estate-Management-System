@@ -295,6 +295,527 @@
 }
 
 /* ==========================================================================
+   SIX UI THEMES
+   Brand + accent ramp per theme. Neutrals stay in :root / .dark so contrast
+   and dark-mode behaviour remain consistent across every theme.
+   ========================================================================== */
+
+[data-theme="daylight"] {
+  --theme-hue: 222;
+  --brand-blue: oklch(0.53 0.13 250);
+  --brand-blue-dark: oklch(0.44 0.12 250);
+  --brand-light-blue: oklch(0.8 0.09 220);
+  --brand-very-light-blue: oklch(0.93 0.04 225);
+  --primary: oklch(0.53 0.13 250);
+  --ring: oklch(0.53 0.13 250);
+  --accent: oklch(0.94 0.02 245);
+  --accent-foreground: oklch(0.36 0.06 250);
+}
+
+[data-theme="daylight"].dark {
+  --brand-blue: oklch(0.78 0.11 220);
+  --brand-blue-dark: oklch(0.68 0.11 225);
+  --brand-light-blue: oklch(0.88 0.06 215);
+  --brand-very-light-blue: oklch(0.33 0.05 240);
+  --primary: oklch(0.78 0.11 220);
+  --ring: oklch(0.78 0.11 220);
+  --accent: oklch(0.29 0.02 252);
+  --accent-foreground: oklch(0.94 0.01 250);
+}
+
+[data-theme="midnight"] {
+  --theme-hue: 262;
+  --brand-blue: oklch(0.5 0.16 275);
+  --brand-blue-dark: oklch(0.4 0.14 280);
+  --brand-light-blue: oklch(0.82 0.09 260);
+  --brand-very-light-blue: oklch(0.94 0.04 275);
+  --primary: oklch(0.5 0.16 275);
+  --ring: oklch(0.5 0.16 275);
+  --accent: oklch(0.94 0.04 275);
+  --accent-foreground: oklch(0.36 0.08 280);
+}
+
+[data-theme="midnight"].dark {
+  --brand-blue: oklch(0.76 0.13 280);
+  --brand-blue-dark: oklch(0.66 0.12 285);
+  --brand-light-blue: oklch(0.88 0.07 265);
+  --brand-very-light-blue: oklch(0.32 0.06 280);
+  --primary: oklch(0.76 0.13 280);
+  --ring: oklch(0.76 0.13 280);
+  --accent: oklch(0.3 0.05 280);
+  --accent-foreground: oklch(0.94 0.02 275);
+}
+
+[data-theme="terracotta"] {
+  --theme-hue: 32;
+  --brand-blue: oklch(0.58 0.16 45);
+  --brand-blue-dark: oklch(0.48 0.14 40);
+  --brand-light-blue: oklch(0.86 0.08 70);
+  --brand-very-light-blue: oklch(0.96 0.04 70);
+  --primary: oklch(0.58 0.16 45);
+  --ring: oklch(0.58 0.16 45);
+  --accent: oklch(0.96 0.04 70);
+  --accent-foreground: oklch(0.4 0.08 40);
+}
+
+[data-theme="terracotta"].dark {
+  --brand-blue: oklch(0.78 0.12 55);
+  --brand-blue-dark: oklch(0.68 0.11 50);
+  --brand-light-blue: oklch(0.9 0.07 65);
+  --brand-very-light-blue: oklch(0.32 0.05 55);
+  --primary: oklch(0.78 0.12 55);
+  --ring: oklch(0.78 0.12 55);
+  --accent: oklch(0.32 0.05 55);
+  --accent-foreground: oklch(0.96 0.03 70);
+}
+
+[data-theme="forest"] {
+  --theme-hue: 160;
+  --brand-blue: oklch(0.5 0.13 155);
+  --brand-blue-dark: oklch(0.4 0.12 155);
+  --brand-light-blue: oklch(0.82 0.08 160);
+  --brand-very-light-blue: oklch(0.94 0.04 160);
+  --primary: oklch(0.5 0.13 155);
+  --ring: oklch(0.5 0.13 155);
+  --accent: oklch(0.94 0.04 160);
+  --accent-foreground: oklch(0.34 0.07 155);
+}
+
+[data-theme="forest"].dark {
+  --brand-blue: oklch(0.74 0.12 160);
+  --brand-blue-dark: oklch(0.64 0.11 160);
+  --brand-light-blue: oklch(0.88 0.07 160);
+  --brand-very-light-blue: oklch(0.3 0.05 160);
+  --primary: oklch(0.74 0.12 160);
+  --ring: oklch(0.74 0.12 160);
+  --accent: oklch(0.29 0.04 160);
+  --accent-foreground: oklch(0.94 0.02 160);
+}
+
+[data-theme="plum"] {
+  --theme-hue: 315;
+  --brand-blue: oklch(0.52 0.17 330);
+  --brand-blue-dark: oklch(0.42 0.15 330);
+  --brand-light-blue: oklch(0.84 0.09 320);
+  --brand-very-light-blue: oklch(0.95 0.04 330);
+  --primary: oklch(0.52 0.17 330);
+  --ring: oklch(0.52 0.17 330);
+  --accent: oklch(0.95 0.04 330);
+  --accent-foreground: oklch(0.38 0.09 330);
+}
+
+[data-theme="plum"].dark {
+  --brand-blue: oklch(0.76 0.13 330);
+  --brand-blue-dark: oklch(0.66 0.12 330);
+  --brand-light-blue: oklch(0.88 0.07 320);
+  --brand-very-light-blue: oklch(0.33 0.06 330);
+  --primary: oklch(0.76 0.13 330);
+  --ring: oklch(0.76 0.13 330);
+  --accent: oklch(0.32 0.06 330);
+  --accent-foreground: oklch(0.95 0.02 330);
+}
+
+[data-theme="graphite"] {
+  --theme-hue: 220;
+  --brand-blue: oklch(0.45 0.04 230);
+  --brand-blue-dark: oklch(0.35 0.04 230);
+  --brand-light-blue: oklch(0.84 0.03 230);
+  --brand-very-light-blue: oklch(0.94 0.01 230);
+  --primary: oklch(0.45 0.04 230);
+  --ring: oklch(0.45 0.04 230);
+  --accent: oklch(0.94 0.01 230);
+  --accent-foreground: oklch(0.32 0.03 230);
+}
+
+[data-theme="graphite"].dark {
+  --brand-blue: oklch(0.76 0.03 230);
+  --brand-blue-dark: oklch(0.66 0.03 230);
+  --brand-light-blue: oklch(0.88 0.02 230);
+  --brand-very-light-blue: oklch(0.32 0.02 230);
+  --primary: oklch(0.76 0.03 230);
+  --ring: oklch(0.76 0.03 230);
+  --accent: oklch(0.3 0.02 230);
+  --accent-foreground: oklch(0.94 0.01 230);
+}
+
+/* ==========================================================================
+   3D + MOTION PRIMITIVES
+   ========================================================================== */
+
+.perspective-1000 { perspective: 1000px; }
+.perspective-1400 { perspective: 1400px; }
+.perspective-2000 { perspective: 2000px; }
+.preserve-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
+.translate-z-0 { transform: translateZ(0); }
+
+/* Scene used by the landing hero and auth panels. */
+.scene-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.scene-wrapper {
+  transform-origin: center center;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .scene-wrapper { transform: scale(0.84); }
+}
+
+@media (max-width: 400px) {
+  .scene-wrapper { transform: scale(0.76); }
+}
+
+.scene-grid-floor {
+  position: absolute;
+  inset: -20% -10% -8% -10%;
+  transform: rotateX(72deg) translateZ(-40px);
+  transform-origin: center bottom;
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--brand-blue) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--brand-blue) 22%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 60%, black 20%, transparent 78%);
+  animation: grid-pan 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes grid-pan {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 44px, 44px 0; }
+}
+
+/* Isometric building blocks. Each block is a 3D box made of three faces. */
+.building {
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.building-face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in oklch, var(--brand-blue) 28%, transparent);
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in oklch, var(--brand-blue) 24%, var(--surface)) 0%,
+      color-mix(in oklch, var(--brand-blue) 8%, var(--surface)) 55%,
+      color-mix(in oklch, var(--brand-blue-dark) 18%, var(--surface)) 100%
+    );
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--surface) 60%, transparent);
+}
+
+.building-face--top {
+  transform: translateZ(var(--bh));
+  background:
+    linear-gradient(
+      140deg,
+      color-mix(in oklch, var(--brand-light-blue) 70%, white) 0%,
+      color-mix(in oklch, var(--brand-blue) 22%, var(--surface)) 100%
+    );
+}
+
+.building-face--side {
+  transform: rotateX(-90deg) translateZ(var(--bd));
+  transform-origin: bottom;
+  height: var(--bd);
+  background: color-mix(in oklch, var(--brand-blue-dark) 34%, var(--surface));
+}
+
+.building-face--front {
+  transform: translateZ(var(--bw));
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 12px,
+      color-mix(in oklch, var(--brand-light-blue) 26%, transparent) 12px 16px
+    ),
+    linear-gradient(
+      150deg,
+      color-mix(in oklch, var(--brand-blue) 18%, var(--surface)) 0%,
+      color-mix(in oklch, var(--brand-blue-dark) 22%, var(--surface)) 100%
+    );
+}
+
+.building-face--right {
+  transform: rotateY(90deg) translateZ(var(--bw));
+  transform-origin: right;
+  width: var(--bd);
+  background: color-mix(in oklch, var(--brand-blue-dark) 28%, var(--surface));
+}
+
+/* Floating glass cards and glow orbs. */
+.glass-panel {
+  background: color-mix(in oklch, var(--surface) 72%, transparent);
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    0 24px 60px -24px color-mix(in oklch, var(--brand-blue) 45%, black),
+    inset 0 1px 0 color-mix(in oklch, var(--surface) 80%, transparent);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: orb-drift 12s ease-in-out infinite alternate;
+}
+
+@keyframes orb-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(24px, -30px, 0) scale(1.12); }
+}
+
+.float-slow { animation: float-y 7s ease-in-out infinite; }
+.float-medium { animation: float-y 5s ease-in-out infinite; }
+.float-fast { animation: float-y 3.6s ease-in-out infinite; }
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.spin-slow { animation: spin 22s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Tilt cards: subtle 3D lift on hover. */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+  will-change: transform;
+}
+
+.tilt-card:hover {
+  transform: translateY(-6px) rotateX(4deg) rotateY(-3deg);
+}
+
+/* Card shine sweep. */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::after {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in oklch, var(--surface-inverse) 8%, transparent) 48%,
+    color-mix(in oklch, var(--brand-light-blue) 42%, transparent) 52%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.9s ease;
+  pointer-events: none;
+}
+
+.card-shine:hover::after { transform: translateX(120%); }
+
+/* Gradient text + animated gradient border. */
+.text-gradient {
+  background: linear-gradient(
+    90deg,
+    var(--brand-blue) 0%,
+    var(--brand-light-blue) 45%,
+    var(--brand-blue-dark) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 180% 100%;
+  animation: gradient-slide 8s ease-in-out infinite;
+}
+
+@keyframes gradient-slide {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.gradient-border {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, var(--brand-blue), var(--brand-light-blue), var(--brand-blue-dark)) border-box;
+}
+
+/* Marquee. */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 2.5rem;
+  animation: marquee 28s linear infinite;
+}
+
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Section navigation pills (landing scroll-spy). */
+.section-nav {
+  position: sticky;
+  top: 4.5rem;
+  z-index: 30;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--surface) 82%, transparent);
+  backdrop-filter: blur(16px);
+  scrollbar-width: none;
+}
+
+.section-nav::-webkit-scrollbar { display: none; }
+
+.section-nav-link {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  transition: color 0.2s, background-color 0.2s, transform 0.2s;
+}
+
+.section-nav-link:hover { color: var(--text-primary); transform: translateY(-1px); }
+
+.section-nav-link[data-active="true"] {
+  color: var(--primary-foreground);
+  background: var(--brand-blue);
+  box-shadow: 0 8px 20px -10px color-mix(in oklch, var(--brand-blue) 80%, black);
+}
+
+/* Scroll progress bar. */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--brand-blue), var(--brand-light-blue), var(--brand-blue-dark));
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* App shell backdrop: a faint brand glow + grid behind every page. */
+.app-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 82% 0%, color-mix(in oklch, var(--brand-blue) 12%, transparent) 0%, transparent 70%),
+    radial-gradient(40% 35% at 0% 100%, color-mix(in oklch, var(--brand-light-blue) 10%, transparent) 0%, transparent 72%);
+}
+
+.app-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--brand-blue) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--brand-blue) 7%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at 50% 0%, black 0%, transparent 68%);
+  opacity: 0.5;
+}
+
+/* Page transition helper (framer-motion mounts/unmounts). */
+.page-enter {
+  animation: page-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(14px) scale(0.995); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Auth surfaces. */
+.auth-scene {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.auth-scene::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in oklch, var(--brand-blue) 55%, transparent) 0%, transparent 34%),
+    radial-gradient(circle at 82% 28%, color-mix(in oklch, var(--brand-light-blue) 42%, transparent) 0%, transparent 30%),
+    radial-gradient(circle at 62% 82%, color-mix(in oklch, var(--brand-blue-dark) 48%, transparent) 0%, transparent 34%),
+    linear-gradient(150deg, color-mix(in oklch, var(--brand-blue-dark) 80%, black) 0%, color-mix(in oklch, var(--brand-blue) 55%, black) 100%);
+  animation: auth-mesh 14s ease-in-out infinite alternate;
+}
+
+.auth-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(color-mix(in oklch, white 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, white 8%, transparent) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(circle at 50% 40%, black 10%, transparent 72%);
+}
+
+@keyframes auth-mesh {
+  from { transform: translate3d(-2%, -2%, 0) rotate(0deg) scale(1); }
+  to { transform: translate3d(3%, 3%, 0) rotate(6deg) scale(1.08); }
+}
+
+.auth-3d-card {
+  transform-style: preserve-3d;
+  animation: auth-card-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes auth-card-in {
+  from { opacity: 0; transform: translateY(26px) rotateX(10deg) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Reveal variants used by the new motion primitives. */
+.reveal-left { opacity: 0; transform: translateX(-24px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.reveal-scale { opacity: 0; transform: scale(0.94); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.reveal-left.reveal--in, .reveal-scale.reveal--in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-3d, .tilt-card, .card-shine, .glass-panel { transition: none; }
+  .scene-grid-floor, .orb, .float-slow, .float-medium, .float-fast,
+  .spin-slow, .marquee-track, .text-gradient, .auth-scene::before,
+  .auth-3d-card, .page-enter {
+    animation: none !important;
+  }
+  .tilt-card:hover, .card-shine:hover::after { transform: none; }
+}
+
+/* ==========================================================================
    BASE
    ========================================================================== */
 

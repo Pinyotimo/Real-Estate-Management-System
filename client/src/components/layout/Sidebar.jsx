@@ -1,6 +1,7 @@
-import React, { useContext, useMemo } from "react";
+import { useContext, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Link, NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import { AuthContext } from "../../context/AuthContext";
 import { useFavourites } from "../../context/FavouritesContext";
 import {
@@ -223,32 +224,44 @@ const Sidebar = ({
                       className={({ isActive }) =>
                         `relative flex items-center gap-3 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all duration-150 ${
                           isActive
-                            ? "border-brand-blue/20 bg-brand-very-light-blue text-brand-blue shadow-xs"
-                            : "border-transparent text-text-secondary hover:bg-surface-soft hover:text-foreground"
+                            ? "border-transparent text-brand-blue"
+                            : "border-transparent text-text-secondary hover:translate-x-0.5 hover:bg-surface-soft hover:text-foreground"
                         } ${isCollapsed ? "lg:justify-center lg:px-0" : ""}`
                       }
                     >
-                      <div className="relative flex items-center justify-center">
-                        <Icon className="h-5 w-5 shrink-0" strokeWidth={1.75} />
-                        {/* Collapsed view badge indicator */}
-                        {isCollapsed && isFavouritesItem && favouritesCount > 0 && (
-                          <span className="absolute -right-1.5 -top-1 flex h-2.5 w-2.5">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75" />
-                            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-rose-500" />
-                          </span>
-                        )}
-                      </div>
-
-                      {!isCollapsed && (
-                        <div className="flex min-w-0 flex-1 items-center justify-between">
-                          <span className="truncate">{item.label}</span>
-                          {/* Expanded view numeric count badge */}
-                          {isFavouritesItem && favouritesCount > 0 && (
-                            <span className="ml-auto inline-flex items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold leading-none text-rose-600 dark:border-rose-900/40 dark:bg-rose-950/80 dark:text-rose-400">
-                              {favouritesCount}
-                            </span>
+                      {({ isActive }) => (
+                        <>
+                          {isActive && (
+                            <motion.span
+                              layoutId="sidebar-active-indicator"
+                              aria-hidden="true"
+                              className="absolute inset-0 rounded-xl border border-brand-blue/20 bg-brand-very-light-blue shadow-xs"
+                              transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                            />
                           )}
-                        </div>
+                          <div className="relative z-10 flex items-center justify-center">
+                            <Icon className="h-5 w-5 shrink-0" strokeWidth={1.75} />
+                            {/* Collapsed view badge indicator */}
+                            {isCollapsed && isFavouritesItem && favouritesCount > 0 && (
+                              <span className="absolute -right-1.5 -top-1 flex h-2.5 w-2.5">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75" />
+                                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-rose-500" />
+                              </span>
+                            )}
+                          </div>
+
+                          {!isCollapsed && (
+                            <div className="relative z-10 flex min-w-0 flex-1 items-center justify-between">
+                              <span className="truncate">{item.label}</span>
+                              {/* Expanded view numeric count badge */}
+                              {isFavouritesItem && favouritesCount > 0 && (
+                                <span className="ml-auto inline-flex items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold leading-none text-rose-600 dark:border-rose-900/40 dark:bg-rose-950/80 dark:text-rose-400">
+                                  {favouritesCount}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </>
                       )}
                     </NavLink>
                   );

@@ -16,18 +16,25 @@
       // the wrong colour scheme. Mirrors the logic in ThemeProvider.
       (function () {
         try {
-          var stored = localStorage.getItem("theme");
-          var theme =
-            stored === "light" || stored === "dark"
-              ? stored
-              : window.matchMedia("(prefers-color-scheme: dark)").matches
+          var themes = ["daylight", "midnight", "terracotta", "forest", "plum", "graphite"];
+          var modes = ["light", "dark", "system"];
+          var storedTheme = localStorage.getItem("theme");
+          var storedMode = localStorage.getItem("color-mode");
+          var theme = themes.indexOf(storedTheme) >= 0 ? storedTheme : "daylight";
+          var mode = modes.indexOf(storedMode) >= 0 ? storedMode : "system";
+          var resolved =
+            mode === "system"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
                 ? "dark"
-                : "light";
-          document.documentElement.classList.toggle("dark", theme === "dark");
-          document.documentElement.style.colorScheme = theme;
-          document.documentElement.setAttribute("data-theme", theme);
+                : "light"
+              : mode;
+          var root = document.documentElement;
+          root.classList.toggle("dark", resolved === "dark");
+          root.style.colorScheme = resolved;
+          root.setAttribute("data-theme", theme);
+          root.setAttribute("data-mode", resolved);
         } catch (e) {
-          /* storage blocked — fall back to the light scheme */
+          /* storage blocked — fall back to the default theme */
         }
       })();
     </script>

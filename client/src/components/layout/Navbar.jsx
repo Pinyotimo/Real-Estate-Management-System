@@ -1,6 +1,7 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { Search, User, Settings, LogOut, ChevronDown, Menu } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
 import NotificationBell from "../Notifications/NotificationBell";
@@ -164,8 +165,15 @@ const Navbar = ({ breadcrumb = "Workspace", onToggleSidebar }) => {
             </button>
 
             {/* Dropdown Menu */}
-            {isDropdownOpen && (
-              <div className="absolute right-0 z-50 mt-2 w-60 animate-in fade-in slide-in-from-top-2 rounded-2xl border border-border bg-popover py-2 shadow-float">
+            <AnimatePresence>
+              {isDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                  transition={{ duration: 0.18, ease: "easeOut" }}
+                  className="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-border bg-popover py-2 shadow-float"
+                >
                 <div className="border-b border-border px-4 py-2">
                   <p className="truncate text-xs font-bold text-foreground">
                     {user?.name || "Guest User"}
@@ -223,8 +231,9 @@ const Navbar = ({ breadcrumb = "Workspace", onToggleSidebar }) => {
                     <span>Sign Out</span>
                   </button>
                 </div>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

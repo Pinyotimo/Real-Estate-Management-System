@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ChevronRight, Home } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Home } from 'lucide-react';
 
 const PageHeader = ({ 
   title, 
@@ -15,8 +15,6 @@ const PageHeader = ({
   separator = '/',
   ...props 
 }) => {
-  const location = useLocation();
-
   const breadcrumbItems = showHome 
     ? [{ label: 'Home', path: '/', icon: Home }, ...breadcrumb]
     : breadcrumb;
@@ -29,7 +27,10 @@ const PageHeader = ({
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className={`mb-6 ${containerClassName}`.trim()}
       {...props}
     >
@@ -123,7 +124,7 @@ const PageHeader = ({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
