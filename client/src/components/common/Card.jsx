@@ -24,19 +24,17 @@ const Card = ({
   // Safe fallback if an invalid padding key is provided
   const resolvedPadding = paddingClasses[padding] || paddingClasses.normal;
 
-  const hoverClass = hover
-    ? 'hover:shadow-raised transition-shadow duration-200'
-    : '';
+  const hoverClass = hover ? "card-hover" : "";
 
   const isInteractive = Boolean(onClick);
 
   return (
     <div
       className={`
-        bg-surface rounded-2xl border border-border shadow-soft
+        card-surface
         ${resolvedPadding}
         ${hoverClass}
-        ${isInteractive ? 'cursor-pointer hover:border-border-hover' : ''}
+        ${isInteractive ? 'cursor-pointer' : ''}
         ${className}
       `.trim().replace(/\s+/g, ' ')}
       onClick={onClick}

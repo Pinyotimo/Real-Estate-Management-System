@@ -720,6 +720,116 @@
   pointer-events: none;
 }
 
+/* ==========================================================================
+   CARD SYSTEM
+   One surface language for listings, dashboards, panels and auth cards.
+   ========================================================================== */
+
+.card-surface {
+  position: relative;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--surface) 94%, var(--brand-blue) 6%) 0%,
+      var(--surface) 55%
+    );
+  border: 1px solid color-mix(in oklch, var(--border) 88%, transparent);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s,
+    border-color 0.35s;
+}
+
+.card-lift {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-float);
+  border-color: color-mix(in oklch, var(--brand-blue) 38%, var(--border));
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-float);
+  border-color: color-mix(in oklch, var(--brand-blue) 38%, var(--border));
+}
+
+.card-accent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  right: 1rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--brand-blue),
+    var(--brand-light-blue),
+    transparent
+  );
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.card-selected {
+  border-color: var(--brand-blue);
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--brand-blue) 22%, transparent),
+    var(--shadow-float);
+}
+
+.card-media {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-soft);
+}
+
+.card-media img,
+.card-media .card-media-img {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s;
+}
+
+.card-media:hover img,
+.card-media:hover .card-media-img {
+  transform: scale(1.07);
+  filter: saturate(1.08);
+}
+
+.card-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, color-mix(in oklch, var(--surface-inverse) 28%, transparent) 100%);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.card-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+  background: color-mix(in oklch, var(--surface) 82%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.card-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--border) 90%, transparent),
+    transparent
+  );
+}
+
 /* App shell backdrop: a faint brand glow + grid behind every page. */
 .app-backdrop {
   position: absolute;
@@ -900,16 +1010,44 @@
   }
 
   .dashboard-panel {
-    @apply rounded-2xl border border-border bg-surface p-4 shadow-soft sm:p-6;
+    @apply relative rounded-2xl border border-border bg-surface p-4 shadow-soft sm:p-6;
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--surface) 92%, var(--brand-blue) 8%) 0%,
+        var(--surface) 55%
+      );
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s,
+      border-color 0.3s;
+  }
+
+  .dashboard-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-float);
+    border-color: color-mix(in oklch, var(--brand-blue) 26%, var(--border));
   }
 
   /* --- Cards ------------------------------------------------------------- */
   .dashboard-card {
-    @apply rounded-2xl border border-border bg-surface p-4 shadow-soft transition-shadow duration-200;
+    @apply rounded-2xl border border-border bg-surface p-4 shadow-soft;
+    background:
+      linear-gradient(
+        170deg,
+        color-mix(in oklch, var(--surface) 94%, var(--brand-blue) 6%) 0%,
+        var(--surface) 55%
+      );
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s,
+      border-color 0.3s;
   }
 
   .dashboard-card:hover {
-    @apply shadow-raised;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-float);
+    border-color: color-mix(in oklch, var(--brand-blue) 30%, var(--border));
   }
 
   .dashboard-card-grid {
@@ -925,7 +1063,39 @@
   }
 
   .stat-card {
-    @apply flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 shadow-soft;
+    @apply relative flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 shadow-soft;
+    background:
+      linear-gradient(
+        160deg,
+        color-mix(in oklch, var(--brand-blue) 10%, var(--surface)) 0%,
+        var(--surface) 55%
+      );
+    overflow: hidden;
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s,
+      border-color 0.3s;
+  }
+
+  .stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--brand-blue),
+      var(--brand-light-blue),
+      transparent
+    );
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-float);
+    border-color: color-mix(in oklch, var(--brand-blue) 34%, var(--border));
   }
 
   .stat-card-grid {
@@ -948,6 +1118,12 @@
     @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl;
     background-color: var(--brand-very-light-blue);
     color: var(--brand-blue);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--brand-blue) 18%, transparent);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .stat-card:hover .stat-card-icon {
+    transform: scale(1.08) rotate(-4deg);
   }
 
   /* --- Forms ------------------------------------------------------------- */

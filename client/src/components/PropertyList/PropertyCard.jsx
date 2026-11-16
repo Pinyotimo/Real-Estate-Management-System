@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
@@ -57,15 +56,15 @@ const PropertyCard = ({ property, onSave, isSaved }) => {
       transition={{ duration: 0.35, ease: "easeOut" }}
       className="h-full"
     >
-      <Card className="group relative flex flex-col h-full overflow-hidden rounded-2xl border border-border bg-card shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <Card className="card-surface card-hover card-accent group relative flex h-full flex-col overflow-hidden rounded-2xl">
         {/* Image Frame & Overlays */}
-        <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+        <div className="card-media relative h-56 w-full sm:h-64 lg:h-60">
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={title}
               loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="h-full w-full object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-muted-foreground/40 bg-secondary/30">
@@ -77,23 +76,20 @@ const PropertyCard = ({ property, onSave, isSaved }) => {
           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none" />
 
           {/* Status Badge */}
-          <div className="absolute top-3 left-3 z-10">
-            <Badge
-              variant="secondary"
-              className={`px-2.5 py-1 text-xs font-semibold rounded-full backdrop-blur-md border shadow-xs transition-colors ${
-                isVacant
-                  ? "bg-emerald-500/10 text-emerald-800 border-emerald-500/20 dark:text-emerald-300"
-                  : "bg-amber-500/10 text-amber-800 border-amber-500/20 dark:text-amber-300"
+          <span
+            className={`card-chip absolute left-3 top-3 z-10 ${
+              isVacant
+                ? "text-emerald-700 dark:text-emerald-300"
+                : "text-amber-700 dark:text-amber-300"
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isVacant ? "bg-emerald-500" : "bg-amber-500"
               }`}
-            >
-              <span
-                className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-                  isVacant ? "bg-emerald-500" : "bg-amber-500"
-                }`}
-              />
-              {isVacant ? "Vacant" : "Occupied"}
-            </Badge>
-          </div>
+            />
+            {isVacant ? "Vacant" : "Occupied"}
+          </span>
 
           {/* Animated Favorite Button */}
           <motion.div
@@ -150,7 +146,8 @@ const PropertyCard = ({ property, onSave, isSaved }) => {
           </div>
 
           {/* Property Features */}
-          <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-border/60">
+          <div className="card-divider" />
+          <div className="flex flex-wrap items-center gap-2 pt-3">
             {houseType && (
               <Badge
                 variant="outline"
